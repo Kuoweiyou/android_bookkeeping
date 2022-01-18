@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/graph_bookkeeping"
+    app:startDestination="@id/bookkeepingFragment">
+
+    <fragment
+        android:id="@+id/bookkeepingFragment"
+        android:name="com.kuo.bookkeeping.ui.bookkeeping.BookkeepingFragment"
+        android:label="@string/bookkeeping"
+        tools:layout="@layout/fragment_bookkeeping">
+        <action
+            android:id="@+id/action_bookkeepingFragment_to_addRecordFragment"
+            app:destination="@id/addRecordFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/addRecordFragment"
+        android:name="com.kuo.bookkeeping.ui.bookkeeping.add_record.AddRecordFragment"
+        android:label="@string/add_record"
+        tools:layout="@layout/fragment_add_record" >
+        <action
+            android:id="@+id/action_addRecordFragment_to_categoryListDialogFragment"
+            app:destination="@id/categoryListDialogFragment" />
+    </fragment>
+    <dialog
+        android:id="@+id/categoryListDialogFragment"
+        android:name="com.kuo.bookkeeping.ui.bookkeeping.add_record.CategoryListDialogFragment"
+        android:label="CategoryListDialogFragment"
+        tools:layout="@layout/dialog_fragment_category_list" />
+</navigation>

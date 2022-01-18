@@ -1,0 +1,30 @@
+<resources>
+    <string name="app_name">BookKeeping</string>
+    <string name="bookkeeping">記帳</string>
+    <string name="analyze">分析</string>
+    <string name="add_record">新增紀錄</string>
+    <string name="hint_remark">備註</string>
+    <string name="today">今天</string>
+    <string name="save">儲存</string>
+
+    <!-- string format -->
+    <string name="choose_date_format">%d/%d/%d</string>
+    
+    <!-- category -->
+    <string name="category_group_food">飲食</string>
+    <string name="category_breakfast">早餐</string>
+    <string name="category_lunch">午餐</string>
+    <string name="category_dinner">晚餐</string>
+
+    <string name="category_group_entertainment">娛樂</string>
+    <string name="category_phone_game">手機遊戲</string>
+    <string name="category_movie">電影</string>
+
+    <!-- content description -->
+    <string name="content_description_calendar">日期</string>
+    <string name="content_description_choose_date">選擇日期</string>
+    <string name="content_description_choose_category">選擇種類</string>
+    <string name="content_description_remark">備註</string>
+    <string name="content_description_category">種類</string>
+    <string name="content_description_amount">金額</string>
+</resources>

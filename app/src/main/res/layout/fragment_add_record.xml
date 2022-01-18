@@ -1,0 +1,163 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideline_start"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.2" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideline_end"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.8" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideline_top"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent="0.3" />
+
+    <ImageView
+        android:id="@+id/iv_money"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:srcCompat="@drawable/ic_baseline_attach_money_24"
+        app:layout_constraintStart_toEndOf="@id/guideline_start"
+        app:layout_constraintBottom_toTopOf="@id/guideline_top"
+        android:contentDescription="@string/content_description_amount" />
+
+    <EditText
+        android:id="@+id/et_amounts"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        app:layout_constraintStart_toEndOf="@id/iv_money"
+        app:layout_constraintEnd_toStartOf="@id/guideline_end"
+        app:layout_constraintTop_toTopOf="@id/iv_money"
+        app:layout_constraintBottom_toBottomOf="@id/iv_money"
+        android:importantForAutofill="no"
+        android:inputType="numberDecimal"
+        tools:ignore="LabelFor" />
+
+    <ImageView
+        android:id="@+id/iv_category"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="25dp"
+        app:srcCompat="@drawable/ic_baseline_category_24"
+        app:layout_constraintStart_toStartOf="@id/guideline_start"
+        app:layout_constraintTop_toBottomOf="@id/guideline_top"
+        android:contentDescription="@string/content_description_category" />
+
+    <Button
+        android:id="@+id/btn_choose_category"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        app:layout_constraintStart_toEndOf="@id/iv_category"
+        app:layout_constraintEnd_toStartOf="@id/guideline_end"
+        app:layout_constraintTop_toTopOf="@id/iv_category"
+        app:layout_constraintBottom_toBottomOf="@id/iv_category"
+        android:alpha="0.03" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="6dp"
+        android:text="@string/content_description_choose_category"
+        android:textSize="13sp"
+        app:layout_constraintStart_toEndOf="@id/iv_category"
+        app:layout_constraintTop_toTopOf="@id/iv_category"
+        app:layout_constraintBottom_toBottomOf="@id/iv_category" />
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:srcCompat="@drawable/ic_baseline_chevron_right_24"
+        app:layout_constraintTop_toTopOf="@id/iv_category"
+        app:layout_constraintBottom_toBottomOf="@id/iv_category"
+        app:layout_constraintEnd_toStartOf="@id/guideline_end"
+        android:contentDescription="@string/content_description_choose_category" />
+
+    <ImageView
+        android:id="@+id/iv_calendar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="25dp"
+        app:srcCompat="@drawable/ic_baseline_calendar_month_24"
+        app:layout_constraintStart_toStartOf="@id/guideline_start"
+        app:layout_constraintTop_toBottomOf="@id/iv_category"
+        android:contentDescription="@string/content_description_calendar" />
+
+    <TextView
+        android:id="@+id/tv_date"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="6dp"
+        android:textSize="13sp"
+        android:text="@string/today"
+        app:layout_constraintStart_toEndOf="@id/iv_calendar"
+        app:layout_constraintTop_toTopOf="@id/iv_calendar"
+        app:layout_constraintBottom_toBottomOf="@id/iv_calendar"
+        tools:text="今天" />
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:srcCompat="@drawable/ic_baseline_chevron_right_24"
+        app:layout_constraintTop_toTopOf="@id/iv_calendar"
+        app:layout_constraintBottom_toBottomOf="@id/iv_calendar"
+        app:layout_constraintEnd_toStartOf="@id/guideline_end"
+        android:contentDescription="@string/content_description_choose_date" />
+
+    <Button
+        android:id="@+id/btn_choose_date"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        app:layout_constraintStart_toEndOf="@id/guideline_start"
+        app:layout_constraintEnd_toStartOf="@id/guideline_end"
+        app:layout_constraintTop_toTopOf="@id/iv_calendar"
+        app:layout_constraintBottom_toBottomOf="@id/iv_calendar"
+        android:alpha="0.03" />
+
+    <ImageView
+        android:id="@+id/iv_description"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="25dp"
+        app:srcCompat="@drawable/ic_baseline_description_24"
+        app:layout_constraintTop_toBottomOf="@id/iv_calendar"
+        app:layout_constraintStart_toEndOf="@id/guideline_start"
+        android:contentDescription="@string/content_description_remark" />
+
+    <EditText
+        android:id="@+id/et_description"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="6dp"
+        android:textSize="13sp"
+        app:layout_constraintStart_toEndOf="@id/iv_description"
+        app:layout_constraintEnd_toStartOf="@id/guideline_end"
+        app:layout_constraintTop_toTopOf="@id/iv_description"
+        app:layout_constraintBottom_toBottomOf="@id/iv_description"
+        android:hint="@string/hint_remark"
+        android:importantForAutofill="no"
+        android:inputType="text" />
+
+    <Button
+        android:id="@+id/btn_save"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/save"
+        app:layout_constraintEnd_toStartOf="@id/guideline_end"
+        app:layout_constraintBottom_toBottomOf="parent" />
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>
