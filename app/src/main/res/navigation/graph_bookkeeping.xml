@@ -16,16 +16,16 @@
     </fragment>
     <fragment
         android:id="@+id/addRecordFragment"
-        android:name="com.kuo.bookkeeping.ui.bookkeeping.add_record.AddRecordFragment"
+        android:name="com.kuo.bookkeeping.ui.bookkeeping.save_record.SaveRecordFragment"
         android:label="@string/add_record"
-        tools:layout="@layout/fragment_add_record" >
+        tools:layout="@layout/fragment_save_record" >
         <action
             android:id="@+id/action_addRecordFragment_to_categoryListDialogFragment"
             app:destination="@id/categoryListDialogFragment" />
     </fragment>
     <dialog
         android:id="@+id/categoryListDialogFragment"
-        android:name="com.kuo.bookkeeping.ui.bookkeeping.add_record.CategoryListDialogFragment"
+        android:name="com.kuo.bookkeeping.ui.bookkeeping.save_record.CategoryListDialogFragment"
         android:label="CategoryListDialogFragment"
         tools:layout="@layout/dialog_fragment_category_list" />
 </navigation>

@@ -6,6 +6,11 @@ import androidx.room.ForeignKey
 import androidx.room.ForeignKey.SET_NULL
 import androidx.room.PrimaryKey
 
+/**
+ * 消費紀錄
+ *
+ * @property time the timestamp in milliseconds
+ */
 @Entity(
     tableName = "consumption",
     foreignKeys = [ForeignKey(
@@ -22,7 +27,7 @@ data class Consumption(
     val consumptionId: Int,
 
     @ColumnInfo(name = "amount")
-    val amount: Long,
+    val amount: Float,
 
     @ColumnInfo(name = FOREIGN_KEY_COLUMN_NAME)
     val categoryId: Int?,

@@ -1,12 +1,9 @@
 package com.kuo.bookkeeping.data.local.model
 
-import android.os.Parcelable
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
-import kotlinx.parcelize.Parcelize
 
-@Parcelize
 @Entity(tableName = "category_group")
 data class CategoryGroup(
 
@@ -19,7 +16,7 @@ data class CategoryGroup(
 
     @ColumnInfo(name = "group_name")
     val groupName: String
-) : Parcelable {
+) {
     companion object {
         const val PRIMARY_KEY_COLUMN_NAME = "group_id"
     }

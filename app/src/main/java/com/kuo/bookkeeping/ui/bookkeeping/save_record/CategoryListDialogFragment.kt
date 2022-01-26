@@ -1,4 +1,4 @@
-package com.kuo.bookkeeping.ui.bookkeeping.add_record
+package com.kuo.bookkeeping.ui.bookkeeping.save_record
 
 import android.view.View
 import android.widget.ExpandableListView
@@ -28,7 +28,6 @@ class CategoryListDialogFragment : BaseDialogFragment<DialogFragmentCategoryList
     override fun setupObserver() {
         viewModel.loadCategoryDataSet()
         viewModel.categoryList.observe(viewLifecycleOwner, {
-            println("category observe in ui: $it")
             categoryListAdapter.dataSet = it
         })
     }
@@ -40,10 +39,8 @@ class CategoryListDialogFragment : BaseDialogFragment<DialogFragmentCategoryList
         childPosition: Int,
         id: Long
     ): Boolean {
-        val categoryGroup = categoryListAdapter.categoryGroups[groupPosition]
         val category = categoryListAdapter.childCategories[groupPosition][childPosition]
         findNavController().previousBackStackEntry?.savedStateHandle?.run {
-            set(CATEGORY_GROUP_RESULT_KEY, categoryGroup)
             set(CATEGORY_RESULT_KEY, category)
         }
         dismissAllowingStateLoss()

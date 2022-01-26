@@ -1,4 +1,4 @@
-package com.kuo.bookkeeping.ui.bookkeeping.add_record
+package com.kuo.bookkeeping.ui.bookkeeping.save_record
 
 import android.annotation.SuppressLint
 import android.content.Context
@@ -21,7 +21,7 @@ class CategoryListAdapter(private val context: Context) : BaseExpandableListAdap
             notifyDataSetChanged()
         }
 
-    val categoryGroups: List<CategoryGroup>
+    private val categoryGroups: List<CategoryGroup>
         get() {
             return dataSet.keys.toList()
         }

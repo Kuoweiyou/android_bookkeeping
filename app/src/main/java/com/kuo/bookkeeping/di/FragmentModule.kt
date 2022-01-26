@@ -1,7 +1,7 @@
 package com.kuo.bookkeeping.di
 
 import androidx.fragment.app.Fragment
-import com.kuo.bookkeeping.ui.bookkeeping.add_record.CategoryListAdapter
+import com.kuo.bookkeeping.ui.bookkeeping.save_record.CategoryListAdapter
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn

@@ -6,6 +6,10 @@
     <string name="hint_remark">備註</string>
     <string name="today">今天</string>
     <string name="save">儲存</string>
+    <string name="hint_invalid_field_amount">請輸入金額</string>
+    <string name="hint_invalid_field_category">請選擇種類</string>
+    <string name="hint_save_error">儲存失敗</string>
+    <string name="hint_save_success">儲存成功</string>
 
     <!-- string format -->
     <string name="choose_date_format">%d/%d/%d</string>

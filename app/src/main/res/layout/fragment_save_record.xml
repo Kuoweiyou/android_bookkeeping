@@ -5,6 +5,9 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
+    <!-- 儲存按鈕從灰底直到各欄位填好才能按 -->
+    <!-- 新增一個重置按紐 -->
+
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/guideline_start"
         android:layout_width="wrap_content"
@@ -36,7 +39,7 @@
         android:contentDescription="@string/content_description_amount" />
 
     <EditText
-        android:id="@+id/et_amounts"
+        android:id="@+id/edt_amounts"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         app:layout_constraintStart_toEndOf="@id/iv_money"
@@ -68,14 +71,15 @@
         android:alpha="0.03" />
 
     <TextView
+        android:id="@+id/tv_category_name"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="6dp"
-        android:text="@string/content_description_choose_category"
         android:textSize="13sp"
         app:layout_constraintStart_toEndOf="@id/iv_category"
         app:layout_constraintTop_toTopOf="@id/iv_category"
-        app:layout_constraintBottom_toBottomOf="@id/iv_category" />
+        app:layout_constraintBottom_toBottomOf="@id/iv_category"
+        tools:text="@string/content_description_choose_category" />
 
     <ImageView
         android:layout_width="wrap_content"
@@ -102,7 +106,6 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="6dp"
         android:textSize="13sp"
-        android:text="@string/today"
         app:layout_constraintStart_toEndOf="@id/iv_calendar"
         app:layout_constraintTop_toTopOf="@id/iv_calendar"
         app:layout_constraintBottom_toBottomOf="@id/iv_calendar"
@@ -138,7 +141,7 @@
         android:contentDescription="@string/content_description_remark" />
 
     <EditText
-        android:id="@+id/et_description"
+        android:id="@+id/edt_remark"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="6dp"
