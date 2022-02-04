@@ -37,29 +37,30 @@ object DomainModule {
     }
 
     @Provides
+    fun provideGetConsumptionsGroupByDateUseCase(
+        consumptionRepository: ConsumptionRepository
+    ): GetConsumptionsGroupByDateUseCase {
+        return GetConsumptionsGroupByDateUseCaseImpl(consumptionRepository)
+    }
+
+    @Provides
     fun provideConvertYearMonthDayToTimestampUseCase(
         @DefaultDispatcher defaultDispatcher: CoroutineDispatcher
     ): ConvertYearMonthDayToTimestampUseCase {
-        return ConvertYearMonthDayToTimestampUseCaseImpl(
-            defaultDispatcher
-        )
+        return ConvertYearMonthDayToTimestampUseCaseImpl(defaultDispatcher)
     }
 
     @Provides
     fun provideFormatDateUseCase(
         @DefaultDispatcher defaultDispatcher: CoroutineDispatcher
     ): FormatDateUseCase {
-        return FormatDateUseCaseImpl(
-            defaultDispatcher
-        )
+        return FormatDateUseCaseImpl(defaultDispatcher)
     }
 
     @Provides
     fun provideValidateConsumptionFieldUseCase(
         @DefaultDispatcher defaultDispatcher: CoroutineDispatcher
     ): ValidateConsumptionFieldUseCase {
-        return ValidateConsumptionFieldUseCaseImpl(
-            defaultDispatcher
-        )
+        return ValidateConsumptionFieldUseCaseImpl(defaultDispatcher)
     }
 }

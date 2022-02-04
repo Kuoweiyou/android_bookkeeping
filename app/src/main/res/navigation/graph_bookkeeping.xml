@@ -11,7 +11,7 @@
         android:label="@string/bookkeeping"
         tools:layout="@layout/fragment_bookkeeping">
         <action
-            android:id="@+id/action_bookkeepingFragment_to_addRecordFragment"
+            android:id="@+id/action_bookkeepingFragment_to_saveRecordFragment"
             app:destination="@id/addRecordFragment" />
     </fragment>
     <fragment

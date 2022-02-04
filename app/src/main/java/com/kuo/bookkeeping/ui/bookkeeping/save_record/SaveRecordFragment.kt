@@ -15,6 +15,8 @@ import com.kuo.bookkeeping.databinding.FragmentSaveRecordBinding
 import com.kuo.bookkeeping.domain.consumption.ConsumptionError
 import com.kuo.bookkeeping.domain.consumption.ConsumptionError.*
 import com.kuo.bookkeeping.ui.base.BaseFragment
+import com.kuo.bookkeeping.ui.bookkeeping.REFRESH_KEY
+import com.kuo.bookkeeping.util.Event
 import com.kuo.bookkeeping.util.UserMessage
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
@@ -57,7 +59,7 @@ class SaveRecordFragment : BaseFragment<FragmentSaveRecordBinding>(
     private fun setUiState(uiState: ConsumptionUiState) {
         setCategoryAndDateText(uiState)
         showUserMessage(uiState)
-        showSaveSuccessMessage(uiState)
+        handleSaveSuccess(uiState)
         resetFields(uiState)
     }
 
@@ -91,15 +93,26 @@ class SaveRecordFragment : BaseFragment<FragmentSaveRecordBinding>(
         viewModel.userMessageShown(userMessage.id)
     }
 
-    private fun showSaveSuccessMessage(uiState: ConsumptionUiState) {
-        uiState.isSaveSuccess.getContentIfNotHandled()?.let { isSaveSuccess ->
-            if (isSaveSuccess) {
-                Toast.makeText(
-                    context,
-                    getText(R.string.hint_save_success),
-                    Toast.LENGTH_SHORT
-                ).show()
+    private fun handleSaveSuccess(uiState: ConsumptionUiState) {
+        uiState.isSaveSuccess.getContentIfNotHandled()?.let {
+            if (it) {
+                showSaveSuccessMessage()
+                setRefreshState()
             }
+        }
+    }
+
+    private fun showSaveSuccessMessage() {
+        Toast.makeText(
+            context,
+            getText(R.string.hint_save_success),
+            Toast.LENGTH_SHORT
+        ).show()
+    }
+
+    private fun setRefreshState() {
+        findNavController().getBackStackEntry(R.id.bookkeepingFragment).savedStateHandle.run {
+            set(REFRESH_KEY, Event(true))
         }
     }
 

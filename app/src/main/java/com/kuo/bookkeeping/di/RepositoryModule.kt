@@ -21,9 +21,7 @@ object RepositoryModule {
     fun provideCategoryRepository(
         categoryLocalDataSource: CategoryLocalDataSource
     ): CategoryRepository {
-        return CategoryRepositoryImpl(
-            categoryLocalDataSource
-        )
+        return CategoryRepositoryImpl(categoryLocalDataSource)
     }
 
     @Singleton
@@ -31,8 +29,6 @@ object RepositoryModule {
     fun provideConsumptionRepository(
         consumptionLocalDataSource: ConsumptionLocalDataSource
     ): ConsumptionRepository {
-        return ConsumptionRepositoryImpl(
-            consumptionLocalDataSource
-        )
+        return ConsumptionRepositoryImpl(consumptionLocalDataSource)
     }
 }

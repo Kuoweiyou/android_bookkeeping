@@ -1,23 +1,26 @@
 package com.kuo.bookkeeping.data.local.source
 
+import androidx.paging.PagingSource
 import com.kuo.bookkeeping.data.Result
 import com.kuo.bookkeeping.data.Result.*
 import com.kuo.bookkeeping.data.local.dao.ConsumptionDao
 import com.kuo.bookkeeping.data.local.model.Consumption
-import kotlinx.coroutines.CoroutineDispatcher
-import kotlinx.coroutines.withContext
+import com.kuo.bookkeeping.data.local.source.paging.DayConsumptions
+import com.kuo.bookkeeping.data.local.source.paging.DayConsumptionsPagingSource
 
 class ConsumptionLocalDataSourceImpl(
-    private val consumptionDao: ConsumptionDao,
-    private val ioDispatcher: CoroutineDispatcher
+    private val consumptionDao: ConsumptionDao
 ) : ConsumptionLocalDataSource {
 
-    override suspend fun insertOrUpdateConsumption(consumption: Consumption): Result<Long> =
-        withContext(ioDispatcher) {
-            return@withContext try {
-                Success(consumptionDao.insertOrUpdate(consumption))
-            } catch (e: Exception) {
-                Error(e)
-            }
+    override suspend fun insertOrUpdate(consumption: Consumption): Result<Long> {
+        return try {
+            Success(consumptionDao.insertOrUpdate(consumption))
+        } catch (e: Exception) {
+            Error(e)
         }
+    }
+
+    override fun getConsumptionsGroupByDate(): PagingSource<Int, DayConsumptions> {
+        return DayConsumptionsPagingSource(consumptionDao)
+    }
 }

@@ -4,6 +4,7 @@ import android.view.View
 import android.widget.ExpandableListView
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
+import com.kuo.bookkeeping.data.local.model.Category
 import com.kuo.bookkeeping.databinding.DialogFragmentCategoryListBinding
 import com.kuo.bookkeeping.ui.base.BaseDialogFragment
 import dagger.hilt.android.AndroidEntryPoint
@@ -14,8 +15,8 @@ class CategoryListDialogFragment : BaseDialogFragment<DialogFragmentCategoryList
     DialogFragmentCategoryListBinding::inflate
 ), ExpandableListView.OnChildClickListener {
 
-    @Inject lateinit var categoryListAdapter: CategoryListAdapter
     private val viewModel: CategoryListViewModel by viewModels()
+    @Inject lateinit var categoryListAdapter: CategoryListAdapter
 
     override fun setupView() {
         binding.listCategory.setAdapter(categoryListAdapter)
@@ -40,10 +41,14 @@ class CategoryListDialogFragment : BaseDialogFragment<DialogFragmentCategoryList
         id: Long
     ): Boolean {
         val category = categoryListAdapter.childCategories[groupPosition][childPosition]
+        setCategoryResult(category)
+        dismissAllowingStateLoss()
+        return false
+    }
+
+    private fun setCategoryResult(category: Category) {
         findNavController().previousBackStackEntry?.savedStateHandle?.run {
             set(CATEGORY_RESULT_KEY, category)
         }
-        dismissAllowingStateLoss()
-        return false
     }
 }

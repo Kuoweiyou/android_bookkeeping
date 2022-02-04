@@ -1,8 +1,9 @@
 package com.kuo.bookkeeping.util
 
 import androidx.lifecycle.Observer
+import java.io.Serializable
 
-open class Event<out T>(private val content: T) {
+open class Event<out T>(private val content: T) : Serializable {
 
     @Suppress("MemberVisibilityCanBePrivate")
     var hasBeenHandled = false

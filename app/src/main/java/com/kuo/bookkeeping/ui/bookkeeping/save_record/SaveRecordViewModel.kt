@@ -157,9 +157,11 @@ class SaveRecordViewModel @Inject constructor(
     }
 
     fun userMessageShown(messageId: Long) {
-        _uiState.update { currentUiState ->
-            val messages = currentUiState.userMessages.filterNot { it.id == messageId }
-            currentUiState.copy(userMessages = messages)
+        viewModelScope.launch(defaultDispatcher) {
+            _uiState.update { currentUiState ->
+                val messages = currentUiState.userMessages.filterNot { it.id == messageId }
+                currentUiState.copy(userMessages = messages)
+            }
         }
     }
 }
