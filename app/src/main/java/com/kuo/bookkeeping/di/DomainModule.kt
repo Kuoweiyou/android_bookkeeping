@@ -44,6 +44,13 @@ object DomainModule {
     }
 
     @Provides
+    fun provideDeleteConsumptionUseCase(
+        consumptionRepository: ConsumptionRepository
+    ): DeleteConsumptionUseCase {
+        return DeleteConsumptionUseCaseImpl(consumptionRepository)
+    }
+
+    @Provides
     fun provideConvertYearMonthDayToTimestampUseCase(
         @DefaultDispatcher defaultDispatcher: CoroutineDispatcher
     ): ConvertYearMonthDayToTimestampUseCase {
@@ -51,16 +58,36 @@ object DomainModule {
     }
 
     @Provides
-    fun provideFormatDateUseCase(
-        @DefaultDispatcher defaultDispatcher: CoroutineDispatcher
-    ): FormatDateUseCase {
-        return FormatDateUseCaseImpl(defaultDispatcher)
-    }
-
-    @Provides
     fun provideValidateConsumptionFieldUseCase(
         @DefaultDispatcher defaultDispatcher: CoroutineDispatcher
     ): ValidateConsumptionFieldUseCase {
         return ValidateConsumptionFieldUseCaseImpl(defaultDispatcher)
+    }
+
+    @Provides
+    fun provideGetConsumptionDetailUseCase(
+        consumptionRepository: ConsumptionRepository
+    ): GetConsumptionDetailUseCase {
+        return GetConsumptionDetailUseCaseImpl(consumptionRepository)
+    }
+
+    @Provides
+    fun provideConvertStringToTimestampUseCase(): ConvertStringToTimestampUseCase {
+        return ConvertStringToTimestampUseCaseImpl()
+    }
+
+    @Provides
+    fun provideConvertTimestampToStringUseCase(): ConvertTimestampToStringUseCase {
+        return ConvertTimestampToStringUseCaseImpl()
+    }
+
+    @Provides
+    fun provideFormatAmountValueUseCase(): FormatAmountValueUseCase {
+        return FormatAmountValueUseCaseImpl()
+    }
+
+    @Provides
+    fun provideConvertAmountInputToValueUseCase(): ConvertAmountInputToValueUseCase {
+        return ConvertAmountInputToValueUseCaseImpl()
     }
 }

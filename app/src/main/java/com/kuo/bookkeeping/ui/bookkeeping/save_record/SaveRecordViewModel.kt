@@ -1,10 +1,14 @@
 package com.kuo.bookkeeping.ui.bookkeeping.save_record
 
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.asFlow
 import androidx.lifecycle.viewModelScope
+import com.kuo.bookkeeping.data.Result
 import com.kuo.bookkeeping.data.Result.*
 import com.kuo.bookkeeping.data.local.model.Category
 import com.kuo.bookkeeping.data.local.model.Consumption
+import com.kuo.bookkeeping.data.local.model.ConsumptionDetail
 import com.kuo.bookkeeping.di.AppModule.DefaultDispatcher
 import com.kuo.bookkeeping.domain.consumption.*
 import com.kuo.bookkeeping.domain.consumption.ConsumptionError.*
@@ -12,12 +16,9 @@ import com.kuo.bookkeeping.util.Event
 import com.kuo.bookkeeping.util.UserMessage
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineDispatcher
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
-import java.lang.NumberFormatException
+import java.text.ParseException
 import java.util.*
 import javax.inject.Inject
 
@@ -25,24 +26,78 @@ import javax.inject.Inject
 class SaveRecordViewModel @Inject constructor(
     private val insertOrUpdateConsumptionUseCase: InsertOrUpdateConsumptionUseCase,
     private val convertYearMonthDayToTimestampUseCase: ConvertYearMonthDayToTimestampUseCase,
-    private val formatDateUseCase: FormatDateUseCase,
+    private val convertStringToTimestampUseCase: ConvertStringToTimestampUseCase,
+    private val convertTimestampToStringUseCase: ConvertTimestampToStringUseCase,
+    private val convertAmountInputToValueUseCase: ConvertAmountInputToValueUseCase,
+    private val formatAmountValueUseCase: FormatAmountValueUseCase,
     private val validateConsumptionFieldUseCase: ValidateConsumptionFieldUseCase,
+    private val savedStateHandle: SavedStateHandle,
+    getConsumptionDetailUseCase: GetConsumptionDetailUseCase,
     @DefaultDispatcher private val defaultDispatcher: CoroutineDispatcher
 ) : ViewModel() {
 
+    private var currentId: Int = 0
     private var currentAmount: Float? = null
     private var currentCategory: Category? = null
     private var currentDate: Long = Calendar.getInstance().timeInMillis
     private var currentRemark: String? = null
 
-    private val _uiState = MutableStateFlow(ConsumptionUiState())
-    val uiState: StateFlow<ConsumptionUiState> = _uiState.asStateFlow()
+    private val _uiState = MutableStateFlow(SaveRecordUiState())
+    val uiState: StateFlow<SaveRecordUiState> = _uiState.asStateFlow()
 
-    fun saveRecord(amountText: String, remark: String) {
+    init {
+        viewModelScope.launch(defaultDispatcher) {
+            savedStateHandle.getLiveData<Int>(CONSUMPTION_ID_KEY)
+                .asFlow()
+                .filterNot { it < 0 }
+                .collect { id ->
+                    val result = getConsumptionDetailUseCase(id)
+                    handleResult(result)
+                }
+        }
+    }
+
+    private fun handleResult(result: Result<ConsumptionDetail>) {
+        if (result is Success) {
+            setDetailData(result.data)
+        } else if (result is Error) {
+            handleResultError(result.exception)
+        }
+    }
+
+    private fun setDetailData(detail: ConsumptionDetail) {
+        currentId = detail.consumptionId
+        currentAmount = detail.amount
+        currentCategory = Category(
+            categoryId = detail.categoryId,
+            categoryName = detail.categoryName,
+            groupId = 0
+        )
+        try {
+            currentDate = convertStringToTimestampUseCase(detail.date)
+        } catch (e: ParseException) {
+
+        }
+        currentRemark = detail.remark
+
+        _uiState.update { currentState ->
+            val formatAmountText = formatAmountValueUseCase(currentAmount)
+            currentState.copy(
+                amount = formatAmountText,
+                categoryName = currentCategory?.categoryName,
+                date = convertTimestampToStringUseCase(currentDate),
+                remark = currentRemark
+            )
+        }
+    }
+
+    private fun handleResultError(error: Exception) {
+
+    }
+
+    fun saveRecord() {
         viewModelScope.launch(defaultDispatcher) {
             try {
-                setAmount(amountText)
-                setRemark(remark)
                 val consumption = validateFields()
                 insertOrUpdate(consumption)
                 resetFields()
@@ -54,18 +109,22 @@ class SaveRecordViewModel @Inject constructor(
         }
     }
 
-    @Throws(InvalidConsumptionFieldException::class)
-    private fun setAmount(amountText: String) {
-        try {
-            currentAmount = amountText.toFloat()
-        } catch (e: NumberFormatException) {
-            throw InvalidConsumptionFieldException(listOf(InvalidField.AMOUNT))
+    fun setAmount(amount: CharSequence?) {
+        viewModelScope.launch(defaultDispatcher) {
+            currentAmount = convertAmountInputToValueUseCase(amount)
+            _uiState.update { currentState ->
+                val formatText = formatAmountValueUseCase(currentAmount)
+                currentState.copy(amount = formatText)
+            }
         }
     }
 
-    private fun setRemark(remark: String) {
-        if (remark.isNotEmpty()) {
-            currentRemark = remark
+    fun setRemark(remark: CharSequence?) {
+        viewModelScope.launch(defaultDispatcher) {
+            currentRemark = remark?.toString()
+            _uiState.update { currentState ->
+                currentState.copy(remark = currentRemark)
+            }
         }
     }
 
@@ -78,7 +137,7 @@ class SaveRecordViewModel @Inject constructor(
             throw InvalidConsumptionFieldException(invalidFields)
         }
         return Consumption(
-            consumptionId = 0,
+            consumptionId = currentId,
             amount = amount!!,
             categoryId = categoryId,
             time = currentDate,
@@ -149,8 +208,7 @@ class SaveRecordViewModel @Inject constructor(
             if (timestampResult is Success) {
                 currentDate = timestampResult.data
                 _uiState.update { currentUiState ->
-                    val formatDate = formatDateUseCase(year, month, day)
-                    currentUiState.copy(date = formatDate)
+                    currentUiState.copy(date = convertTimestampToStringUseCase(currentDate))
                 }
             }
         }
@@ -164,11 +222,21 @@ class SaveRecordViewModel @Inject constructor(
             }
         }
     }
+
+    fun setId(id: Int) {
+        savedStateHandle[CONSUMPTION_ID_KEY] = id
+    }
+
+    companion object {
+        private const val CONSUMPTION_ID_KEY = "consumption_id_key"
+    }
 }
 
-data class ConsumptionUiState(
+data class SaveRecordUiState(
+    val amount: String? = null,
     val categoryName: String? = null,
     val date: String? = null,
+    val remark: String? = null,
     val isSaveSuccess: Event<Boolean> = Event(false),
     val userMessages: List<UserMessage<ConsumptionError>> = emptyList(),
     val isResetFields: Event<Boolean> = Event(false)

@@ -1,6 +1,8 @@
 package com.kuo.bookkeeping.ui.bookkeeping.save_record
 
 import android.app.DatePickerDialog
+import android.text.Editable
+import android.text.TextWatcher
 import android.widget.DatePicker
 import android.widget.Toast
 import androidx.fragment.app.viewModels
@@ -9,6 +11,7 @@ import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
+import androidx.navigation.fragment.navArgs
 import com.kuo.bookkeeping.R
 import com.kuo.bookkeeping.data.local.model.Category
 import com.kuo.bookkeeping.databinding.FragmentSaveRecordBinding
@@ -28,6 +31,10 @@ class SaveRecordFragment : BaseFragment<FragmentSaveRecordBinding>(
 ), DatePickerDialog.OnDateSetListener {
 
     private val viewModel: SaveRecordViewModel by viewModels()
+    private val args: SaveRecordFragmentArgs by navArgs()
+
+    private val amountTextWatcher: TextWatcher by lazy { initAmountTextWatcher() }
+    private val remarkTextWatcher: TextWatcher by lazy { initRemarkTextWatcher() }
 
     override fun setupView() {
 
@@ -41,38 +48,49 @@ class SaveRecordFragment : BaseFragment<FragmentSaveRecordBinding>(
             showDatePickerDialog()
         }
         binding.btnSave.setOnClickListener {
-            saveRecord()
+            viewModel.saveRecord()
         }
+        binding.edtAmounts.addTextChangedListener(amountTextWatcher)
+        binding.edtRemark.addTextChangedListener(remarkTextWatcher)
     }
 
     override fun setupObserver() {
         setupCategoryResultObserver()
+        viewModel.setId(args.consumptionId)
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
                 viewModel.uiState.collect { uiState ->
-                    setUiState(uiState)
+                    bindUiState(uiState)
                 }
             }
         }
     }
 
-    private fun setUiState(uiState: ConsumptionUiState) {
-        setCategoryAndDateText(uiState)
+    private fun bindUiState(uiState: SaveRecordUiState) {
+        setFieldsText(uiState)
         showUserMessage(uiState)
         handleSaveSuccess(uiState)
         resetFields(uiState)
     }
 
-    private fun setCategoryAndDateText(uiState: ConsumptionUiState) {
-        val categoryName = uiState.categoryName
-            ?: getText(R.string.content_description_choose_category)
-        binding.tvCategoryName.text = categoryName
-
-        val date = uiState.date ?: getText(R.string.today)
-        binding.tvDate.text = date
+    private fun setFieldsText(uiState: SaveRecordUiState) {
+        binding.edtAmounts.apply {
+            removeTextChangedListener(amountTextWatcher)
+            setText(uiState.amount)
+            setSelection(uiState.amount?.length ?: 0)
+            addTextChangedListener(amountTextWatcher)
+        }
+        binding.tvCategoryName.text = uiState.categoryName ?: getText(R.string.content_description_choose_category)
+        binding.tvDate.text = uiState.date ?: getText(R.string.today)
+        binding.edtRemark.apply {
+            removeTextChangedListener(remarkTextWatcher)
+            setText(uiState.remark)
+            setSelection(uiState.remark?.length ?: 0)
+            addTextChangedListener(remarkTextWatcher)
+        }
     }
 
-    private fun showUserMessage(uiState: ConsumptionUiState) {
+    private fun showUserMessage(uiState: SaveRecordUiState) {
         uiState.userMessages.firstOrNull()?.let { userMessage ->
             showUserMessage(userMessage)
         }
@@ -93,7 +111,7 @@ class SaveRecordFragment : BaseFragment<FragmentSaveRecordBinding>(
         viewModel.userMessageShown(userMessage.id)
     }
 
-    private fun handleSaveSuccess(uiState: ConsumptionUiState) {
+    private fun handleSaveSuccess(uiState: SaveRecordUiState) {
         uiState.isSaveSuccess.getContentIfNotHandled()?.let {
             if (it) {
                 showSaveSuccessMessage()
@@ -116,7 +134,7 @@ class SaveRecordFragment : BaseFragment<FragmentSaveRecordBinding>(
         }
     }
 
-    private fun resetFields(uiState: ConsumptionUiState) {
+    private fun resetFields(uiState: SaveRecordUiState) {
         uiState.isResetFields.getContentIfNotHandled()?.let { isResetFields ->
             if (isResetFields) {
                 clearFields()
@@ -127,12 +145,6 @@ class SaveRecordFragment : BaseFragment<FragmentSaveRecordBinding>(
     private fun clearFields() {
         binding.edtAmounts.text.clear()
         binding.edtRemark.text.clear()
-    }
-
-    private fun saveRecord() {
-        val amountText = binding.edtAmounts.text.toString()
-        val remark = binding.edtRemark.text.toString()
-        viewModel.saveRecord(amountText, remark)
     }
 
     private fun showCategoryListDialog() {
@@ -155,7 +167,7 @@ class SaveRecordFragment : BaseFragment<FragmentSaveRecordBinding>(
     }
 
     private fun setupCategoryResultObserver() {
-        val navBackStackEntry = findNavController().getBackStackEntry(R.id.addRecordFragment)
+        val navBackStackEntry = findNavController().getBackStackEntry(R.id.saveRecordFragment)
         val observer = LifecycleEventObserver { _, event ->
             if (event == Lifecycle.Event.ON_RESUME
                 && navBackStackEntry.savedStateHandle.contains(CATEGORY_RESULT_KEY)
@@ -182,6 +194,34 @@ class SaveRecordFragment : BaseFragment<FragmentSaveRecordBinding>(
         day: Int
     ) {
         viewModel.setDate(year, month, day)
+    }
+
+    private fun initAmountTextWatcher(): TextWatcher {
+        return object : TextWatcher {
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
+            }
+
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                viewModel.setAmount(s)
+            }
+
+            override fun afterTextChanged(s: Editable?) {
+            }
+        }
+    }
+
+    private fun initRemarkTextWatcher(): TextWatcher {
+        return object : TextWatcher {
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
+            }
+
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                viewModel.setRemark(s)
+            }
+
+            override fun afterTextChanged(s: Editable?) {
+            }
+        }
     }
 }
 

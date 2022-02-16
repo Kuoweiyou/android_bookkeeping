@@ -10,19 +10,14 @@
     <string name="hint_invalid_field_category">請選擇種類</string>
     <string name="hint_save_error">儲存失敗</string>
     <string name="hint_save_success">儲存成功</string>
+    <string name="retry">重試</string>
+    <string name="empty_data">資料為空</string>
+    <string name="modify">編輯</string>
+    <string name="delete">刪除</string>
+    <string name="delete_success">刪除成功</string>
 
     <!-- string format -->
     <string name="choose_date_format">%d/%d/%d</string>
-    
-    <!-- category -->
-    <string name="category_group_food">飲食</string>
-    <string name="category_breakfast">早餐</string>
-    <string name="category_lunch">午餐</string>
-    <string name="category_dinner">晚餐</string>
-
-    <string name="category_group_entertainment">娛樂</string>
-    <string name="category_phone_game">手機遊戲</string>
-    <string name="category_movie">電影</string>
 
     <!-- content description -->
     <string name="content_description_calendar">日期</string>

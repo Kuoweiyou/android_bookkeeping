@@ -10,6 +10,10 @@ class GetConsumptionsGroupByDateUseCaseImpl(
 ) : GetConsumptionsGroupByDateUseCase {
 
     override fun invoke(): Flow<PagingData<DayConsumptions>> {
-        return consumptionRepository.getConsumptionsGroupByDate(pageSize = 7)
+        return consumptionRepository.getConsumptionsGroupByDate(pageSize = PAGE_SIZE)
+    }
+
+    companion object {
+        const val PAGE_SIZE = 7
     }
 }

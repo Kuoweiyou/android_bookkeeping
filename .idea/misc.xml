@@ -12,12 +12,15 @@
         <entry key="..\:/My_Android_Project/bookkeeping/app/src/main/res/layout/fragment_add_record.xml" value="0.5" />
         <entry key="..\:/My_Android_Project/bookkeeping/app/src/main/res/layout/fragment_analyze.xml" value="0.3473731884057971" />
         <entry key="..\:/My_Android_Project/bookkeeping/app/src/main/res/layout/fragment_bookkeeping.xml" value="0.3473731884057971" />
+        <entry key="..\:/My_Android_Project/bookkeeping/app/src/main/res/layout/fragment_consumption_detail.xml" value="0.33" />
         <entry key="..\:/My_Android_Project/bookkeeping/app/src/main/res/layout/fragment_main.xml" value="0.3473731884057971" />
+        <entry key="..\:/My_Android_Project/bookkeeping/app/src/main/res/layout/fragment_save_record.xml" value="0.26403985507246375" />
         <entry key="..\:/My_Android_Project/bookkeeping/app/src/main/res/layout/item_category.xml" value="0.33" />
         <entry key="..\:/My_Android_Project/bookkeeping/app/src/main/res/layout/item_consumption.xml" value="0.2703804347826087" />
         <entry key="..\:/My_Android_Project/bookkeeping/app/src/main/res/layout/item_day_consumption.xml" value="0.2504528985507246" />
         <entry key="..\:/My_Android_Project/bookkeeping/app/src/main/res/layout/item_day_consumptions.xml" value="0.25679347826086957" />
         <entry key="..\:/My_Android_Project/bookkeeping/app/src/main/res/layout/item_group_category.xml" value="0.2821557971014493" />
+        <entry key="..\:/My_Android_Project/bookkeeping/app/src/main/res/layout/item_load_state_footer.xml" value="0.24592391304347827" />
         <entry key="..\:/My_Android_Project/bookkeeping/app/src/main/res/menu/menu_bottom_nav.xml" value="0.3651041666666667" />
         <entry key="..\:/My_Android_Project/bookkeeping/app/src/main/res/mipmap-anydpi-v26/ic_launcher.xml" value="0.3578125" />
         <entry key="..\:/My_Android_Project/bookkeeping/app/src/main/res/mipmap-anydpi-v26/ic_launcher_round.xml" value="0.3578125" />

@@ -6,3 +6,13 @@ data class ConsumptionCategoryTuple(
     val categoryName: String,
     val iconName: String
 )
+
+data class ConsumptionDetail(
+    val consumptionId: Int,
+    val amount: Float,
+    val categoryId: Int,
+    val categoryName: String,
+    val iconName: String,
+    val date: String,
+    val remark: String?
+)

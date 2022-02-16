@@ -6,10 +6,11 @@ import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
-import androidx.recyclerview.widget.LinearLayoutManager
 import com.kuo.bookkeeping.R
 import com.kuo.bookkeeping.databinding.FragmentBookkeepingBinding
+import com.kuo.bookkeeping.di.LinearLayoutManagerFactory
 import com.kuo.bookkeeping.ui.base.BaseFragment
+import com.kuo.bookkeeping.ui.bookkeeping.DayConsumptionsAdapter.DayConsumptionsAdapterFactory
 import com.kuo.bookkeeping.util.Event
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
@@ -20,13 +21,35 @@ class BookkeepingFragment : BaseFragment<FragmentBookkeepingBinding>(
     FragmentBookkeepingBinding::inflate
 ) {
     private val viewModel: BookkeepingViewModel by viewModels()
-    @Inject lateinit var dayConsumptionsAdapter: DayConsumptionsAdapter
+
+    @Inject lateinit var adapterFactory: DayConsumptionsAdapterFactory
+    private lateinit var dayConsumptionsAdapter: DayConsumptionsAdapter
+    @Inject lateinit var linearLayoutManagerFactory: LinearLayoutManagerFactory
 
     override fun setupView() {
+        getAdapter()
         binding.rvDayConsumption.apply {
-            layoutManager = LinearLayoutManager(context)
+            layoutManager = linearLayoutManagerFactory.create(context)
             adapter = dayConsumptionsAdapter
         }
+    }
+
+    private fun getAdapter() {
+        dayConsumptionsAdapter = adapterFactory.create(
+            onNestedItemClick = { consumptionId ->
+                onConsumptionItemClick(consumptionId)
+            }
+        )
+    }
+
+    private fun onConsumptionItemClick(consumptionId: Int) {
+        navigateToDetailPage(consumptionId)
+    }
+
+    private fun navigateToDetailPage(consumptionId: Int) {
+        val action = BookkeepingFragmentDirections
+            .toConsumptionDetailFragmentAction(consumptionId)
+        findNavController().navigate(action)
     }
 
     override fun setupListener() {
@@ -36,7 +59,7 @@ class BookkeepingFragment : BaseFragment<FragmentBookkeepingBinding>(
     }
 
     override fun setupObserver() {
-        setupSaveSuccessResultObserver()
+        setupRefreshObserver()
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
                 viewModel.uiState.collect { uiState ->
@@ -53,7 +76,7 @@ class BookkeepingFragment : BaseFragment<FragmentBookkeepingBinding>(
         }
     }
 
-    private fun setupSaveSuccessResultObserver() {
+    private fun setupRefreshObserver() {
         val navBackStackEntry = findNavController().getBackStackEntry(R.id.bookkeepingFragment)
         val observer = LifecycleEventObserver { _, event ->
             if (event == Lifecycle.Event.ON_RESUME

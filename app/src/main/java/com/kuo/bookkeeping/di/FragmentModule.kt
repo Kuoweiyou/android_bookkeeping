@@ -1,11 +1,15 @@
 package com.kuo.bookkeeping.di
 
+import android.content.Context
 import androidx.fragment.app.Fragment
+import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.kuo.bookkeeping.ui.bookkeeping.DayConsumptionsAdapter
 import com.kuo.bookkeeping.ui.bookkeeping.save_record.CategoryListAdapter
 import dagger.Module
 import dagger.Provides
+import dagger.assisted.Assisted
+import dagger.assisted.AssistedFactory
+import dagger.assisted.AssistedInject
 import dagger.hilt.InstallIn
 import dagger.hilt.android.components.FragmentComponent
 
@@ -22,11 +26,13 @@ object FragmentModule {
 
     @Provides
     fun provideRecycledViewPool(): RecyclerView.RecycledViewPool = RecyclerView.RecycledViewPool()
-
-    @Provides
-    fun provideDaysConsumptionAdapter(
-        recycledViewPool: RecyclerView.RecycledViewPool
-    ): DayConsumptionsAdapter {
-        return DayConsumptionsAdapter(recycledViewPool)
-    }
 }
+
+@AssistedFactory
+interface LinearLayoutManagerFactory {
+    fun create(context: Context): MyLinearLayoutManager
+}
+
+class MyLinearLayoutManager @AssistedInject constructor(
+    @Assisted context: Context
+) : LinearLayoutManager(context)

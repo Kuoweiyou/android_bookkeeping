@@ -36,8 +36,10 @@ class BookkeepingViewModel @Inject constructor(
     }
 
     fun refreshPage() {
-        _uiState.update { currentUiState ->
-            currentUiState.copy(isRefresh = Event(true))
+        viewModelScope.launch(defaultDispatcher) {
+            _uiState.update { currentUiState ->
+                currentUiState.copy(isRefresh = Event(true))
+            }
         }
     }
 }
