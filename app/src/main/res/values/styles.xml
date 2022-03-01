@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="Widget.Self.CardView" parent="Widget.MaterialComponents.CardView">
+        <item name="cardCornerRadius">12dp</item>
+        <item name="android:backgroundTint">?attr/colorOnSecondary</item>
+    </style>
+
+    <style name="TextAppearance.Self.Body1" parent="TextAppearance.MaterialComponents.Body1">
+        <item name="android:textSize">15sp</item>
+    </style>
+
+    <style name="TextAppearance.Self.BodyLarge" parent="TextAppearance.Material3.BodyLarge">
+        <item name="android:gravity">center</item>
+        <item name="android:drawablePadding">11dp</item>
+    </style>
+
+    <style name="Widget.Self.FloatingActionButton.Primary" parent="Widget.Material3.FloatingActionButton.Primary">
+        <item name="backgroundTint">?attr/colorAccent</item>
+        <item name="tint">@color/black</item>
+    </style>
+
+    <style name="Widget.Self.BottomNavigationView.ActiveIndicator" parent="Widget.Material3.BottomNavigationView.ActiveIndicator">
+        <item name="android:color">#E4E4C4</item>
+        <item name="android:height">24dp</item>
+    </style>
+
+
+</resources>

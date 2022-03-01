@@ -12,9 +12,10 @@
     <string name="hint_save_success">儲存成功</string>
     <string name="retry">重試</string>
     <string name="empty_data">資料為空</string>
-    <string name="modify">編輯</string>
+    <string name="edit">編輯</string>
     <string name="delete">刪除</string>
     <string name="delete_success">刪除成功</string>
+    <string name="consumption_detail_page_title">消費記錄</string>
 
     <!-- string format -->
     <string name="choose_date_format">%d/%d/%d</string>

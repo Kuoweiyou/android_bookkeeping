@@ -1,8 +1,6 @@
 package com.kuo.bookkeeping.ui.bookkeeping.save_record
 
-import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.asFlow
 import androidx.lifecycle.viewModelScope
 import com.kuo.bookkeeping.data.Result
 import com.kuo.bookkeeping.data.Result.*
@@ -31,7 +29,6 @@ class SaveRecordViewModel @Inject constructor(
     private val convertAmountInputToValueUseCase: ConvertAmountInputToValueUseCase,
     private val formatAmountValueUseCase: FormatAmountValueUseCase,
     private val validateConsumptionFieldUseCase: ValidateConsumptionFieldUseCase,
-    private val savedStateHandle: SavedStateHandle,
     getConsumptionDetailUseCase: GetConsumptionDetailUseCase,
     @DefaultDispatcher private val defaultDispatcher: CoroutineDispatcher
 ) : ViewModel() {
@@ -45,10 +42,16 @@ class SaveRecordViewModel @Inject constructor(
     private val _uiState = MutableStateFlow(SaveRecordUiState())
     val uiState: StateFlow<SaveRecordUiState> = _uiState.asStateFlow()
 
+    private val detailId = MutableStateFlow(DEFAULT_DETAIL_ID)
+
+    private val isFromDetailPage: Boolean
+        get() {
+            return detailId.value != DEFAULT_DETAIL_ID
+        }
+
     init {
         viewModelScope.launch(defaultDispatcher) {
-            savedStateHandle.getLiveData<Int>(CONSUMPTION_ID_KEY)
-                .asFlow()
+            detailId
                 .filterNot { it < 0 }
                 .collect { id ->
                     val result = getConsumptionDetailUseCase(id)
@@ -149,8 +152,17 @@ class SaveRecordViewModel @Inject constructor(
     private suspend fun insertOrUpdate(consumption: Consumption) {
         val result = insertOrUpdateConsumptionUseCase(consumption)
         if (result is Success) {
-            _uiState.update { currentUiState ->
-                currentUiState.copy(isSaveSuccess = Event(true))
+            if (isFromDetailPage) {
+                _uiState.update { currentUiState ->
+                    currentUiState.copy(
+                        isSaveSuccess = Event(true),
+                        isModifyDetailSuccess = Event(true)
+                    )
+                }
+            } else {
+                _uiState.update { currentUiState ->
+                    currentUiState.copy(isSaveSuccess = Event(true))
+                }
             }
         } else if (result is Error) {
             throw result.exception
@@ -224,11 +236,13 @@ class SaveRecordViewModel @Inject constructor(
     }
 
     fun setId(id: Int) {
-        savedStateHandle[CONSUMPTION_ID_KEY] = id
+        viewModelScope.launch(defaultDispatcher) {
+            detailId.emit(id)
+        }
     }
 
     companion object {
-        private const val CONSUMPTION_ID_KEY = "consumption_id_key"
+        private const val DEFAULT_DETAIL_ID = -1
     }
 }
 
@@ -239,7 +253,8 @@ data class SaveRecordUiState(
     val remark: String? = null,
     val isSaveSuccess: Event<Boolean> = Event(false),
     val userMessages: List<UserMessage<ConsumptionError>> = emptyList(),
-    val isResetFields: Event<Boolean> = Event(false)
+    val isResetFields: Event<Boolean> = Event(false),
+    val isModifyDetailSuccess: Event<Boolean> = Event(false)
 )
 
 class InvalidConsumptionFieldException(

@@ -3,12 +3,23 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+        <entry key="..\:/My_Android_Project/bookkeeping/app/src/main/res/drawable-v24/ic_fill_homel.xml" value="0.3578125" />
         <entry key="..\:/My_Android_Project/bookkeeping/app/src/main/res/drawable-v24/ic_home_black_24dp.xml" value="0.38125" />
+        <entry key="..\:/My_Android_Project/bookkeeping/app/src/main/res/drawable/drawer_header_background.xml" value="0.3578125" />
         <entry key="..\:/My_Android_Project/bookkeeping/app/src/main/res/drawable/ic_analytics_black_24dp.xml" value="0.38125" />
         <entry key="..\:/My_Android_Project/bookkeeping/app/src/main/res/drawable/ic_baseline_add_24.xml" value="0.3578125" />
         <entry key="..\:/My_Android_Project/bookkeeping/app/src/main/res/drawable/ic_baseline_fastfood_24.xml" value="0.3578125" />
+        <entry key="..\:/My_Android_Project/bookkeeping/app/src/main/res/drawable/ic_drawer.xml" value="0.3578125" />
+        <entry key="..\:/My_Android_Project/bookkeeping/app/src/main/res/drawable/ic_entertainment.xml" value="0.3578125" />
+        <entry key="..\:/My_Android_Project/bookkeeping/app/src/main/res/drawable/ic_fill_analytics.xml" value="0.3578125" />
+        <entry key="..\:/My_Android_Project/bookkeeping/app/src/main/res/drawable/ic_food.xml" value="0.3578125" />
+        <entry key="..\:/My_Android_Project/bookkeeping/app/src/main/res/drawable/selector_analytics.xml" value="0.3578125" />
+        <entry key="..\:/My_Android_Project/bookkeeping/app/src/main/res/drawable/selector_home.xml" value="0.3578125" />
         <entry key="..\:/My_Android_Project/bookkeeping/app/src/main/res/layout/activity_main.xml" value="0.3428442028985507" />
+        <entry key="..\:/My_Android_Project/bookkeeping/app/src/main/res/layout/app_bar.xml" value="0.25815217391304346" />
+        <entry key="..\:/My_Android_Project/bookkeeping/app/src/main/res/layout/app_bar_main.xml" value="0.33" />
         <entry key="..\:/My_Android_Project/bookkeeping/app/src/main/res/layout/dialog_fragment_category_list.xml" value="0.2821557971014493" />
+        <entry key="..\:/My_Android_Project/bookkeeping/app/src/main/res/layout/drawer_header.xml" value="0.2848731884057971" />
         <entry key="..\:/My_Android_Project/bookkeeping/app/src/main/res/layout/fragment_add_record.xml" value="0.5" />
         <entry key="..\:/My_Android_Project/bookkeeping/app/src/main/res/layout/fragment_analyze.xml" value="0.3473731884057971" />
         <entry key="..\:/My_Android_Project/bookkeeping/app/src/main/res/layout/fragment_bookkeeping.xml" value="0.3473731884057971" />
@@ -16,18 +27,19 @@
         <entry key="..\:/My_Android_Project/bookkeeping/app/src/main/res/layout/fragment_main.xml" value="0.3473731884057971" />
         <entry key="..\:/My_Android_Project/bookkeeping/app/src/main/res/layout/fragment_save_record.xml" value="0.26403985507246375" />
         <entry key="..\:/My_Android_Project/bookkeeping/app/src/main/res/layout/item_category.xml" value="0.33" />
-        <entry key="..\:/My_Android_Project/bookkeeping/app/src/main/res/layout/item_consumption.xml" value="0.2703804347826087" />
+        <entry key="..\:/My_Android_Project/bookkeeping/app/src/main/res/layout/item_consumption.xml" value="0.5" />
         <entry key="..\:/My_Android_Project/bookkeeping/app/src/main/res/layout/item_day_consumption.xml" value="0.2504528985507246" />
-        <entry key="..\:/My_Android_Project/bookkeeping/app/src/main/res/layout/item_day_consumptions.xml" value="0.25679347826086957" />
+        <entry key="..\:/My_Android_Project/bookkeeping/app/src/main/res/layout/item_day_consumptions.xml" value="0.33" />
         <entry key="..\:/My_Android_Project/bookkeeping/app/src/main/res/layout/item_group_category.xml" value="0.2821557971014493" />
         <entry key="..\:/My_Android_Project/bookkeeping/app/src/main/res/layout/item_load_state_footer.xml" value="0.24592391304347827" />
         <entry key="..\:/My_Android_Project/bookkeeping/app/src/main/res/menu/menu_bottom_nav.xml" value="0.3651041666666667" />
+        <entry key="..\:/My_Android_Project/bookkeeping/app/src/main/res/menu/menu_main_drawer.xml" value="0.3375" />
         <entry key="..\:/My_Android_Project/bookkeeping/app/src/main/res/mipmap-anydpi-v26/ic_launcher.xml" value="0.3578125" />
         <entry key="..\:/My_Android_Project/bookkeeping/app/src/main/res/mipmap-anydpi-v26/ic_launcher_round.xml" value="0.3578125" />
       </map>
     </option>
   </component>
-  <component name="ProjectRootManager" version="2" languageLevel="JDK_11" default="true" project-jdk-name="1.8" project-jdk-type="JavaSDK">
+  <component name="ProjectRootManager" version="2" languageLevel="JDK_11" project-jdk-name="1.8" project-jdk-type="JavaSDK">
     <output url="file://$PROJECT_DIR$/build/classes" />
   </component>
   <component name="ProjectType">

@@ -1,10 +1,14 @@
 package com.kuo.bookkeeping.ui.bookkeeping
 
+import android.annotation.SuppressLint
+import android.view.View
+import androidx.core.view.doOnPreDraw
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
+import androidx.navigation.fragment.FragmentNavigatorExtras
 import androidx.navigation.fragment.findNavController
 import com.kuo.bookkeeping.R
 import com.kuo.bookkeeping.databinding.FragmentBookkeepingBinding
@@ -26,30 +30,40 @@ class BookkeepingFragment : BaseFragment<FragmentBookkeepingBinding>(
     private lateinit var dayConsumptionsAdapter: DayConsumptionsAdapter
     @Inject lateinit var linearLayoutManagerFactory: LinearLayoutManagerFactory
 
-    override fun setupView() {
+    override fun setupView(view: View) {
         getAdapter()
         binding.rvDayConsumption.apply {
             layoutManager = linearLayoutManagerFactory.create(context)
             adapter = dayConsumptionsAdapter
         }
+        setupTransition(view)
+    }
+
+    private fun setupTransition(view: View) {
+        postponeEnterTransition()
+        view.doOnPreDraw { startPostponedEnterTransition() }
     }
 
     private fun getAdapter() {
         dayConsumptionsAdapter = adapterFactory.create(
-            onNestedItemClick = { consumptionId ->
-                onConsumptionItemClick(consumptionId)
+            onNestedItemClick = { consumptionId, itemView ->
+                onConsumptionItemClick(consumptionId, itemView)
             }
         )
     }
 
-    private fun onConsumptionItemClick(consumptionId: Int) {
-        navigateToDetailPage(consumptionId)
+    private fun onConsumptionItemClick(consumptionId: Int, itemView: View) {
+        navigateToDetailPage(consumptionId, itemView)
     }
 
-    private fun navigateToDetailPage(consumptionId: Int) {
+    @SuppressLint("StringFormatMatches")
+    private fun navigateToDetailPage(consumptionId: Int, itemView: View) {
         val action = BookkeepingFragmentDirections
             .toConsumptionDetailFragmentAction(consumptionId)
-        findNavController().navigate(action)
+        val extras = FragmentNavigatorExtras(
+            itemView to getString(R.string.transition_card_consumption_item, consumptionId.toString())
+        )
+        findNavController().navigate(action, extras)
     }
 
     override fun setupListener() {

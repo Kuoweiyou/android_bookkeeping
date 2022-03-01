@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#F0F4C3">
+    android:background="?attr/colorSecondary">
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/guideline_top"
@@ -38,6 +38,7 @@
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/fab_add_record"
+        style="@style/Widget.Self.FloatingActionButton.Primary"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="16dp"

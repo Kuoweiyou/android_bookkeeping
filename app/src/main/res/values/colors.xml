@@ -8,4 +8,11 @@
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
     <color name="gray">#32666666</color>
+    <color name="green">#4CAF50</color>
+    <color name="green_light">#C8E6C9</color>
+    <color name="orange">#FF9800</color>
+    <color name="black_primary_text">#212121</color>
+    <color name="gray_second_text">#757575</color>
+    <color name="purple">#ab47bc</color>
+    <color name="purple_light">#ce93d8</color>
 </resources>

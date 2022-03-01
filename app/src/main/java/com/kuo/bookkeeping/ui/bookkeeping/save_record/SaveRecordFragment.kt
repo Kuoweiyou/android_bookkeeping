@@ -3,9 +3,11 @@ package com.kuo.bookkeeping.ui.bookkeeping.save_record
 import android.app.DatePickerDialog
 import android.text.Editable
 import android.text.TextWatcher
+import android.view.View
 import android.widget.DatePicker
 import android.widget.Toast
 import androidx.fragment.app.viewModels
+import androidx.hilt.navigation.fragment.hiltNavGraphViewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.lifecycleScope
@@ -18,6 +20,7 @@ import com.kuo.bookkeeping.databinding.FragmentSaveRecordBinding
 import com.kuo.bookkeeping.domain.consumption.ConsumptionError
 import com.kuo.bookkeeping.domain.consumption.ConsumptionError.*
 import com.kuo.bookkeeping.ui.base.BaseFragment
+import com.kuo.bookkeeping.ui.bookkeeping.BookkeepingGraphViewModel
 import com.kuo.bookkeeping.ui.bookkeeping.REFRESH_KEY
 import com.kuo.bookkeeping.util.Event
 import com.kuo.bookkeeping.util.UserMessage
@@ -31,12 +34,13 @@ class SaveRecordFragment : BaseFragment<FragmentSaveRecordBinding>(
 ), DatePickerDialog.OnDateSetListener {
 
     private val viewModel: SaveRecordViewModel by viewModels()
+    private val graphViewModel: BookkeepingGraphViewModel by hiltNavGraphViewModels(R.id.graph_bookkeeping)
     private val args: SaveRecordFragmentArgs by navArgs()
 
     private val amountTextWatcher: TextWatcher by lazy { initAmountTextWatcher() }
     private val remarkTextWatcher: TextWatcher by lazy { initRemarkTextWatcher() }
 
-    override fun setupView() {
+    override fun setupView(view: View) {
 
     }
 
@@ -117,6 +121,9 @@ class SaveRecordFragment : BaseFragment<FragmentSaveRecordBinding>(
                 showSaveSuccessMessage()
                 setRefreshState()
             }
+        }
+        uiState.isModifyDetailSuccess.getContentIfNotHandled()?.let {
+            if (it) { graphViewModel.setDetailRefresh() }
         }
     }
 

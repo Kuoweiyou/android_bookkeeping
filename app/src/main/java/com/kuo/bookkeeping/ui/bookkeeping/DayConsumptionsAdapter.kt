@@ -1,6 +1,7 @@
 package com.kuo.bookkeeping.ui.bookkeeping
 
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.DiffUtil
@@ -15,7 +16,7 @@ import dagger.assisted.AssistedInject
 
 class DayConsumptionsAdapter @AssistedInject constructor(
     private val recycledViewPool: RecyclerView.RecycledViewPool,
-    @Assisted private val onNestedItemClick: (Int) -> Unit
+    @Assisted private val onNestedItemClick: (Int, View) -> Unit
 ) : PagingDataAdapter<DayConsumptions, DayConsumptionsViewHolder>(diffCallback) {
 
     override fun onBindViewHolder(holder: DayConsumptionsViewHolder, position: Int) {
@@ -29,7 +30,7 @@ class DayConsumptionsAdapter @AssistedInject constructor(
 
     @AssistedFactory
     interface DayConsumptionsAdapterFactory {
-        fun create(onNestedItemClick: (Int) -> Unit): DayConsumptionsAdapter
+        fun create(onNestedItemClick: (Int, View) -> Unit): DayConsumptionsAdapter
     }
 
     companion object {
@@ -54,7 +55,7 @@ class DayConsumptionsAdapter @AssistedInject constructor(
 
 class DayConsumptionsViewHolder(
     private val binding: ItemDayConsumptionsBinding,
-    private val onNestedItemClick: (Int) -> Unit
+    private val onNestedItemClick: (Int, View) -> Unit
 ) : RecyclerView.ViewHolder(binding.root) {
 
     private var isAddedItemDecoration = false
@@ -63,8 +64,8 @@ class DayConsumptionsViewHolder(
         binding.tvDate.text = item?.first
         item?.second?.let { data ->
             binding.rvConsumption.apply {
-                adapter = ConsumptionAdapter(data) { id ->
-                    onNestedItemClick.invoke(id)
+                adapter = ConsumptionAdapter(data) { id, itemView ->
+                    onNestedItemClick.invoke(id, itemView)
                 }
                 if (!isAddedItemDecoration) {
                     addItemDecoration()
@@ -88,7 +89,7 @@ class DayConsumptionsViewHolder(
     companion object {
         fun create(
             parent: ViewGroup,
-            onNestedItemLongClick: (Int) -> Unit
+            onNestedItemLongClick: (Int, View) -> Unit
         ): DayConsumptionsViewHolder {
             val view = LayoutInflater.from(parent.context)
                 .inflate(R.layout.item_day_consumptions, parent, false)

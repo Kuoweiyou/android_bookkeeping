@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="transition_card_consumption_item">card_consumption_item_%1$s</string>
+</resources>

@@ -19,7 +19,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class ConsumptionDetailViewModel @Inject constructor(
-    getConsumptionDetailUseCase: GetConsumptionDetailUseCase,
+    private val getConsumptionDetailUseCase: GetConsumptionDetailUseCase,
     private val deleteConsumptionUseCase: DeleteConsumptionUseCase,
     @DefaultDispatcher private val defaultDispatcher: CoroutineDispatcher
 ) : ViewModel() {
@@ -87,6 +87,14 @@ class ConsumptionDetailViewModel @Inject constructor(
                     )
                 }
             }
+        }
+    }
+
+    fun refresh() {
+        viewModelScope.launch(defaultDispatcher) {
+            val id = detailId.value
+            val result = getConsumptionDetailUseCase(id)
+            handleResult(result)
         }
     }
 }

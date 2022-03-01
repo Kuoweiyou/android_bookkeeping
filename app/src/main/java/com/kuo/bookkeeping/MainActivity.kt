@@ -8,6 +8,7 @@ import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.NavigationUI.setupWithNavController
 import androidx.navigation.ui.navigateUp
 import androidx.navigation.ui.setupActionBarWithNavController
+import androidx.navigation.ui.setupWithNavController
 import com.kuo.bookkeeping.databinding.ActivityMainBinding
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -26,20 +27,23 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun setupNavigation() {
+        setSupportActionBar(binding.appBarMain.toolbar)
         val navHostFragment = supportFragmentManager.findFragmentById(
             R.id.nav_host_container
         ) as NavHostFragment
 
         navController = navHostFragment.navController
-        setupWithNavController(binding.bottomNav, navController)
+        setupWithNavController(binding.appBarMain.bottomNav, navController)
 
         appBarConfiguration = AppBarConfiguration(
-            setOf(R.id.bookkeepingFragment, R.id.analyzeFragment)
+            topLevelDestinationIds = setOf(R.id.bookkeepingFragment, R.id.analyzeFragment),
+            drawerLayout = binding.drawer
         )
         setupActionBarWithNavController(navController, appBarConfiguration)
+        binding.navView.setupWithNavController(navController)
     }
 
     override fun onSupportNavigateUp(): Boolean {
-        return navController.navigateUp(appBarConfiguration)
+        return navController.navigateUp(appBarConfiguration) || super.onSupportNavigateUp()
     }
 }

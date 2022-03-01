@@ -1,12 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_margin="6dp"
-    app:cardCornerRadius="12dp"
-    app:cardBackgroundColor="#F9FBE7">
+    style="@style/Widget.Self.CardView">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
@@ -14,41 +13,23 @@
 
         <TextView
             android:id="@+id/tv_date"
+            style="@style/TextAppearance.Self.Body1"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="15dp"
-            android:paddingTop="2dp"
+            android:paddingTop="10dp"
             android:paddingBottom="2dp"
-            android:textSize="20sp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintBottom_toTopOf="@id/view_div"
             tools:text="2022/11/22" />
-
-        <View
-            android:id="@+id/view_div"
-            android:layout_width="match_parent"
-            android:layout_height="1.5dp"
-            android:background="@color/gray"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/tv_date" />
-
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintBottom_toTopOf="@id/view_div"
-            android:background="@color/gray" />
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/rv_consumption"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-            app:layout_constraintTop_toBottomOf="@id/view_div"
+            app:layout_constraintTop_toBottomOf="@id/tv_date"
             tools:listitem="@layout/item_consumption" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
-</androidx.cardview.widget.CardView>
+</com.google.android.material.card.MaterialCardView>

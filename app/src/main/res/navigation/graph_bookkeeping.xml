@@ -38,7 +38,7 @@
     <fragment
         android:id="@+id/consumptionDetailFragment"
         android:name="com.kuo.bookkeeping.ui.bookkeeping.detail.ConsumptionDetailFragment"
-        android:label="ConsumptionDetailFragment"
+        android:label="@string/consumption_detail_page_title"
         tools:layout="@layout/fragment_consumption_detail">
         <argument
             android:name="consumptionId"

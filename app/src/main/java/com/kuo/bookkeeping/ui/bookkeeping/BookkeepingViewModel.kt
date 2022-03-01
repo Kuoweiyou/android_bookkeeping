@@ -8,9 +8,8 @@ import com.kuo.bookkeeping.di.AppModule.DefaultDispatcher
 import com.kuo.bookkeeping.domain.consumption.GetConsumptionsGroupByDateUseCase
 import com.kuo.bookkeeping.util.Event
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*
-import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
