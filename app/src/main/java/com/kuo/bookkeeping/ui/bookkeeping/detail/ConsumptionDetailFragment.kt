@@ -15,6 +15,7 @@ import com.google.android.material.transition.MaterialContainerTransform
 import com.kuo.bookkeeping.R
 import com.kuo.bookkeeping.data.local.model.ConsumptionDetail
 import com.kuo.bookkeeping.databinding.FragmentConsumptionDetailBinding
+import com.kuo.bookkeeping.extension.trimEndZero
 import com.kuo.bookkeeping.ui.base.BaseFragment
 import com.kuo.bookkeeping.ui.bookkeeping.BookkeepingGraphViewModel
 import com.kuo.bookkeeping.ui.bookkeeping.REFRESH_KEY
@@ -85,7 +86,7 @@ class ConsumptionDetailFragment : BaseFragment<FragmentConsumptionDetailBinding>
 
     private fun bindDetailState(detail: ConsumptionDetail?) {
         detail?.let {
-            binding.tvAmount.text = detail.amount.toString()
+            binding.tvAmount.text = detail.amount.toString().trimEndZero()
             binding.tvCategory.apply {
                 text = detail.categoryName
                 val imageId = context.resources.getIdentifier(

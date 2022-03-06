@@ -77,4 +77,6 @@ dependencies {
 
     // paging
     implementation "androidx.paging:paging-runtime-ktx:$paging_version"
+
+    implementation 'org.mariuszgromada.math:MathParser.org-mXparser:4.4.2'
 }

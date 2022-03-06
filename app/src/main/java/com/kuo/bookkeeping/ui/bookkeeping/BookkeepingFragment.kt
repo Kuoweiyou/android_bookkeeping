@@ -67,9 +67,7 @@ class BookkeepingFragment : BaseFragment<FragmentBookkeepingBinding>(
     }
 
     override fun setupListener() {
-        binding.fabAddRecord.setOnClickListener {
-            findNavController().navigate(R.id.action_bookkeepingFragment_to_saveRecordFragment)
-        }
+
     }
 
     override fun setupObserver() {

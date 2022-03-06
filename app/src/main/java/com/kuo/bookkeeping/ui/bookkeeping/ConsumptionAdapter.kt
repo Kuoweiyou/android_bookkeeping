@@ -8,6 +8,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.kuo.bookkeeping.R
 import com.kuo.bookkeeping.data.local.model.ConsumptionCategoryTuple
 import com.kuo.bookkeeping.databinding.ItemConsumptionBinding
+import com.kuo.bookkeeping.extension.trimEndZero
 
 class ConsumptionAdapter(
     private val dataSet: List<ConsumptionCategoryTuple>,
@@ -39,7 +40,7 @@ class ConsumptionViewHolder(
             val image = ContextCompat.getDrawable(context, imageId)
             setCompoundDrawablesWithIntrinsicBounds(image, null, null, null)
         }
-        binding.tvAmount.text = item.amount.toString()
+        binding.tvAmount.text = item.amount.toString().trimEndZero()
         binding.root.transitionName = itemView.context.getString(
             R.string.transition_card_consumption_item, item.consumptionId.toString()
         )

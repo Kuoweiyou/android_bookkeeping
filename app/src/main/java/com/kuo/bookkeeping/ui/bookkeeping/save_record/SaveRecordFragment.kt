@@ -1,11 +1,15 @@
 package com.kuo.bookkeeping.ui.bookkeeping.save_record
 
 import android.app.DatePickerDialog
+import android.content.Context
 import android.text.Editable
 import android.text.TextWatcher
+import android.view.Gravity
 import android.view.View
 import android.widget.DatePicker
 import android.widget.Toast
+import androidx.activity.OnBackPressedCallback
+import androidx.core.view.isVisible
 import androidx.fragment.app.viewModels
 import androidx.hilt.navigation.fragment.hiltNavGraphViewModels
 import androidx.lifecycle.Lifecycle
@@ -14,6 +18,8 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
+import androidx.transition.TransitionManager
+import com.kuo.bookkeeping.MainActivity
 import com.kuo.bookkeeping.R
 import com.kuo.bookkeeping.data.local.model.Category
 import com.kuo.bookkeeping.databinding.FragmentSaveRecordBinding
@@ -41,7 +47,38 @@ class SaveRecordFragment : BaseFragment<FragmentSaveRecordBinding>(
     private val remarkTextWatcher: TextWatcher by lazy { initRemarkTextWatcher() }
 
     override fun setupView(view: View) {
+        binding.edtAmounts.apply {
+//            setRawInputType(InputType.TYPE_CLASS_TEXT)
+//            setTextIsSelectable(true)
+            showSoftInputOnFocus = false
+        }
 
+//        binding.edtAmounts.setOnFocusChangeListener { v, hasFocus ->
+//            if (hasFocus) {
+//                val ic = binding.edtAmounts.onCreateInputConnection(EditorInfo())
+//                binding.keyboard.setInputConnection(ic)
+//                showKeyboard()
+//            } else {
+//                hideKeyboard()
+//            }
+//        }
+
+        binding.edtAmounts.setOnClickListener {
+            if (!binding.keyboard.isVisible) {
+                showKeyboard()
+                (requireActivity() as MainActivity).transformNavBarToKeyboard()
+            }
+        }
+
+    }
+
+    private fun showKeyboard() {
+        val transition = androidx.transition.Slide(Gravity.BOTTOM).apply {
+            duration = resources.getInteger(R.integer.motion_duration).toLong()
+            addTarget(binding.keyboard)
+        }
+        TransitionManager.beginDelayedTransition(binding.root, transition)
+        binding.keyboard.visibility = View.VISIBLE
     }
 
     override fun setupListener() {
@@ -229,6 +266,30 @@ class SaveRecordFragment : BaseFragment<FragmentSaveRecordBinding>(
             override fun afterTextChanged(s: Editable?) {
             }
         }
+    }
+
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        requireActivity().onBackPressedDispatcher
+            .addCallback(this, object : OnBackPressedCallback(true) {
+                override fun handleOnBackPressed() {
+                    if (binding.keyboard.isVisible) {
+                        hideKeyboard()
+                        (requireActivity() as MainActivity).recoverNavBarFromKeyboard()
+                    } else {
+                        findNavController().navigateUp()
+                    }
+                }
+            })
+    }
+
+    private fun hideKeyboard() {
+        val transition = androidx.transition.Slide(Gravity.BOTTOM).apply {
+            duration = resources.getInteger(R.integer.motion_duration).toLong()
+            addTarget(binding.keyboard)
+        }
+        TransitionManager.beginDelayedTransition(binding.root, transition)
+        binding.keyboard.visibility = View.GONE
     }
 }
 

@@ -71,6 +71,7 @@ class DayConsumptionsViewHolder(
                     addItemDecoration()
                     isAddedItemDecoration = true
                 }
+                isNestedScrollingEnabled = false
             }
         }
     }

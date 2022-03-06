@@ -36,17 +36,4 @@
         app:layout_constraintStart_toEndOf="@id/guideline_start"
         app:layout_constraintEnd_toStartOf="@id/guideline_end" />
 
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/fab_add_record"
-        style="@style/Widget.Self.FloatingActionButton.Primary"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="16dp"
-        android:clickable="true"
-        android:focusable="true"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@id/guideline_end"
-        app:srcCompat="@android:drawable/ic_input_add"
-        android:contentDescription="add_record" />
-
 </androidx.constraintlayout.widget.ConstraintLayout>
