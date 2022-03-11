@@ -7,15 +7,15 @@ import com.kuo.bookkeeping.data.repository.ConsumptionRepository
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.withContext
 
-class InsertOrUpdateConsumptionUseCaseImpl(
+class InsertConsumptionUseCaseImpl(
     private val consumptionRepository: ConsumptionRepository,
     private val defaultDispatcher: CoroutineDispatcher
-) : InsertOrUpdateConsumptionUseCase {
+) : InsertConsumptionUseCase {
 
     override suspend fun invoke(consumption: Consumption): Result<Long> =
         withContext(defaultDispatcher) {
             return@withContext try {
-                when (val result = consumptionRepository.insertOrUpdateConsumption(consumption)) {
+                when (val result = consumptionRepository.insert(consumption)) {
                     is Success -> result
                     is Error -> throw result.exception
                     is Loading -> Loading

@@ -16,7 +16,6 @@ import androidx.navigation.ui.navigateUp
 import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
 import com.kuo.bookkeeping.databinding.ActivityMainBinding
-import com.kuo.bookkeeping.ui.MainViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 
@@ -65,6 +64,7 @@ class MainActivity : AppCompatActivity() {
             } else {
                 viewModel.setShowAddFab(false)
             }
+            showNavBar()
         }
     }
 
@@ -103,7 +103,7 @@ class MainActivity : AppCompatActivity() {
             })
     }
 
-    fun recoverNavBarFromKeyboard() {
+    fun showNavBar() {
         binding.appBarMain.bottomNav.animate()
             .translationY(0f)
             .setStartDelay(resources.getInteger(R.integer.motion_nav_bar_from_keyboard_start_delay).toLong())

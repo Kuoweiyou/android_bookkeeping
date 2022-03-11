@@ -9,7 +9,10 @@ import com.kuo.bookkeeping.data.local.model.ConsumptionDetail
 interface ConsumptionDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertOrUpdate(consumption: Consumption): Long
+    suspend fun insert(consumption: Consumption): Long
+
+    @Update
+    suspend fun update(consumption: Consumption): Int
 
     @MapInfo(keyColumn = "date")
     @Query(
@@ -18,7 +21,7 @@ interface ConsumptionDao {
         "JOIN category ON category.category_id = consumption.category_id " +
         "JOIN category_group ON category_group.group_id = category.group_id " +
         "WHERE date IN (SELECT DATE(time/1000, 'unixepoch') AS date FROM consumption GROUP BY date ORDER BY date DESC LIMIT :start, :limit) " +
-        "ORDER BY time DESC, consumption_id DESC"
+        "ORDER BY date DESC, consumption_id DESC"
     )
     suspend fun getConsumptionsGroupByDate(start: Int, limit: Int): Map<String, List<ConsumptionCategoryTuple>>
 

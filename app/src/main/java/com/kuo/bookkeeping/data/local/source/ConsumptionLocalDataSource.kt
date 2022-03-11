@@ -8,7 +8,9 @@ import com.kuo.bookkeeping.data.local.source.paging.DayConsumptions
 
 interface ConsumptionLocalDataSource {
 
-    suspend fun insertOrUpdate(consumption: Consumption): Result<Long>
+    suspend fun insert(consumption: Consumption): Result<Long>
+
+    suspend fun update(consumption: Consumption): Result<Int>
 
     fun getConsumptionsGroupByDate(): PagingSource<Int, DayConsumptions>
 

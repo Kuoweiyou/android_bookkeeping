@@ -14,8 +14,12 @@ class ConsumptionRepositoryImpl(
     private val consumptionLocalDataSource: ConsumptionLocalDataSource
 ) : ConsumptionRepository {
 
-    override suspend fun insertOrUpdateConsumption(consumption: Consumption): Result<Long> {
-        return consumptionLocalDataSource.insertOrUpdate(consumption)
+    override suspend fun insert(consumption: Consumption): Result<Long> {
+        return consumptionLocalDataSource.insert(consumption)
+    }
+
+    override suspend fun update(consumption: Consumption): Result<Int> {
+        return consumptionLocalDataSource.update(consumption)
     }
 
     override fun getConsumptionsGroupByDate(pageSize: Int): Flow<PagingData<DayConsumptions>> =

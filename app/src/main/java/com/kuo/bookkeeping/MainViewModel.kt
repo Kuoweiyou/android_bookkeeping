@@ -1,4 +1,4 @@
-package com.kuo.bookkeeping.ui
+package com.kuo.bookkeeping
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope

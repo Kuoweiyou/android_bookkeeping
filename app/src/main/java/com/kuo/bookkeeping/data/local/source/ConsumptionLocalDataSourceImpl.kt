@@ -15,9 +15,17 @@ class ConsumptionLocalDataSourceImpl(
     private val consumptionDao: ConsumptionDao
 ) : ConsumptionLocalDataSource {
 
-    override suspend fun insertOrUpdate(consumption: Consumption): Result<Long> {
+    override suspend fun insert(consumption: Consumption): Result<Long> {
         return try {
-            Success(consumptionDao.insertOrUpdate(consumption))
+            Success(consumptionDao.insert(consumption))
+        } catch (e: Exception) {
+            Error(e)
+        }
+    }
+
+    override suspend fun update(consumption: Consumption): Result<Int> {
+        return try {
+            Success(consumptionDao.update(consumption))
         } catch (e: Exception) {
             Error(e)
         }

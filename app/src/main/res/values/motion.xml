@@ -4,5 +4,5 @@
     <integer name="motion_nav_bar_to_keyboard_start_delay">30</integer>
     <integer name="motion_nav_bar_to_keyboard_duration">60</integer>
     <integer name="motion_nav_bar_from_keyboard_start_delay">190</integer>
-    <integer name="motion_nav_bar_from_keyboard_duration">110</integer>
+    <integer name="motion_nav_bar_from_keyboard_duration">100</integer>
 </resources>

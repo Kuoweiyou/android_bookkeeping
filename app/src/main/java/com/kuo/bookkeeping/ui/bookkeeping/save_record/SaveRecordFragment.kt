@@ -2,8 +2,7 @@ package com.kuo.bookkeeping.ui.bookkeeping.save_record
 
 import android.app.DatePickerDialog
 import android.content.Context
-import android.text.Editable
-import android.text.TextWatcher
+import android.text.format.DateUtils
 import android.view.Gravity
 import android.view.View
 import android.widget.DatePicker
@@ -23,16 +22,17 @@ import com.kuo.bookkeeping.MainActivity
 import com.kuo.bookkeeping.R
 import com.kuo.bookkeeping.data.local.model.Category
 import com.kuo.bookkeeping.databinding.FragmentSaveRecordBinding
-import com.kuo.bookkeeping.domain.consumption.ConsumptionError
-import com.kuo.bookkeeping.domain.consumption.ConsumptionError.*
+import com.kuo.bookkeeping.extension.trimEndZero
 import com.kuo.bookkeeping.ui.base.BaseFragment
 import com.kuo.bookkeeping.ui.bookkeeping.BookkeepingGraphViewModel
 import com.kuo.bookkeeping.ui.bookkeeping.REFRESH_KEY
 import com.kuo.bookkeeping.util.Event
-import com.kuo.bookkeeping.util.UserMessage
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
+import org.mariuszgromada.math.mxparser.Expression
+import java.text.DecimalFormat
 import java.util.*
+import kotlin.NumberFormatException
 
 @AndroidEntryPoint
 class SaveRecordFragment : BaseFragment<FragmentSaveRecordBinding>(
@@ -43,33 +43,63 @@ class SaveRecordFragment : BaseFragment<FragmentSaveRecordBinding>(
     private val graphViewModel: BookkeepingGraphViewModel by hiltNavGraphViewModels(R.id.graph_bookkeeping)
     private val args: SaveRecordFragmentArgs by navArgs()
 
-    private val amountTextWatcher: TextWatcher by lazy { initAmountTextWatcher() }
-    private val remarkTextWatcher: TextWatcher by lazy { initRemarkTextWatcher() }
+    private var tempCategory: Category? = null
+        set(value) {
+            field = value
+            binding.tvCategoryName.text = field?.categoryName ?: getString(R.string.content_description_choose_category)
+        }
+    private var tempCalendar = Calendar.getInstance()
+        set(value) {
+            field = value
+            setDateText(field)
+        }
+
+    private fun setDateText(calendar: Calendar) {
+        binding.tvDate.text = if (DateUtils.isToday(calendar.timeInMillis)) {
+            getString(R.string.today)
+        } else {
+            getString(
+                R.string.choose_date_format,
+                calendar.get(Calendar.YEAR),
+                calendar.get(Calendar.MONTH) + 1,
+                calendar.get(Calendar.DAY_OF_MONTH)
+            )
+        }
+    }
 
     override fun setupView(view: View) {
-        binding.edtAmounts.apply {
-//            setRawInputType(InputType.TYPE_CLASS_TEXT)
-//            setTextIsSelectable(true)
-            showSoftInputOnFocus = false
-        }
 
-//        binding.edtAmounts.setOnFocusChangeListener { v, hasFocus ->
-//            if (hasFocus) {
-//                val ic = binding.edtAmounts.onCreateInputConnection(EditorInfo())
-//                binding.keyboard.setInputConnection(ic)
-//                showKeyboard()
-//            } else {
-//                hideKeyboard()
-//            }
-//        }
+    }
 
-        binding.edtAmounts.setOnClickListener {
+    override fun setupListener() {
+        binding.tvAmount.setOnClickListener {
             if (!binding.keyboard.isVisible) {
                 showKeyboard()
-                (requireActivity() as MainActivity).transformNavBarToKeyboard()
             }
         }
+        setupKeyboard()
+        binding.btnChooseCategory.setOnClickListener {
+            showCategoryListDialog()
+        }
+        binding.btnChooseDate.setOnClickListener {
+            showDatePickerDialog()
+        }
+        binding.btnSave.setOnClickListener {
+            val amount = try {
+                binding.tvAmount.text.toString().toFloat()
+            } catch (e: NumberFormatException) {
+                // set 0 to text, and hint user is 0
 
+                setDefaultAmount()
+                0f
+            }
+            viewModel.saveRecord(
+                amount = amount,
+                categoryId = tempCategory?.categoryId,
+                date = tempCalendar,
+                remark = binding.edtRemark.text.toString()
+            )
+        }
     }
 
     private fun showKeyboard() {
@@ -79,20 +109,107 @@ class SaveRecordFragment : BaseFragment<FragmentSaveRecordBinding>(
         }
         TransitionManager.beginDelayedTransition(binding.root, transition)
         binding.keyboard.visibility = View.VISIBLE
+
+        (requireActivity() as MainActivity).transformNavBarToKeyboard()
     }
 
-    override fun setupListener() {
-        binding.btnChooseCategory.setOnClickListener {
-            showCategoryListDialog()
+    private fun setupKeyboard() {
+        binding.keyboard.binding.btn0.setOnClickListener {
+            binding.tvAmount.text = addToInputText("0")
         }
-        binding.btnChooseDate.setOnClickListener {
-            showDatePickerDialog()
+        binding.keyboard.binding.btn1.setOnClickListener {
+            binding.tvAmount.text = addToInputText("1")
         }
-        binding.btnSave.setOnClickListener {
-            viewModel.saveRecord()
+        binding.keyboard.binding.btn2.setOnClickListener {
+            binding.tvAmount.text = addToInputText("2")
         }
-        binding.edtAmounts.addTextChangedListener(amountTextWatcher)
-        binding.edtRemark.addTextChangedListener(remarkTextWatcher)
+        binding.keyboard.binding.btn3.setOnClickListener {
+            binding.tvAmount.text = addToInputText("3")
+        }
+        binding.keyboard.binding.btn4.setOnClickListener {
+            binding.tvAmount.text = addToInputText("4")
+        }
+        binding.keyboard.binding.btn5.setOnClickListener {
+            binding.tvAmount.text = addToInputText("5")
+        }
+        binding.keyboard.binding.btn6.setOnClickListener {
+            binding.tvAmount.text = addToInputText("6")
+        }
+        binding.keyboard.binding.btn7.setOnClickListener {
+            binding.tvAmount.text = addToInputText("7")
+        }
+        binding.keyboard.binding.btn8.setOnClickListener {
+            binding.tvAmount.text = addToInputText("8")
+        }
+        binding.keyboard.binding.btn9.setOnClickListener {
+            binding.tvAmount.text = addToInputText("9")
+        }
+        binding.keyboard.binding.btnDot.setOnClickListener {
+            binding.tvAmount.text = addToInputText(".")
+        }
+        binding.keyboard.binding.btnAddition.setOnClickListener {
+            binding.tvAmount.text = addToInputText("+")
+        }
+        binding.keyboard.binding.btnSubtraction.setOnClickListener {
+            binding.tvAmount.text = addToInputText("-")
+        }
+        binding.keyboard.binding.btnMultiply.setOnClickListener {
+            binding.tvAmount.text = addToInputText("×")
+        }
+        binding.keyboard.binding.btnDivision.setOnClickListener {
+            binding.tvAmount.text = addToInputText("÷")
+        }
+        binding.keyboard.binding.btnBracketLeft.setOnClickListener {
+            binding.tvAmount.text = addToInputText("(")
+        }
+        binding.keyboard.binding.btnBracketRight.setOnClickListener {
+            binding.tvAmount.text = addToInputText(")")
+        }
+        binding.keyboard.binding.btnBack.setOnClickListener {
+            val amountText = binding.tvAmount.text
+            if (amountText.length <= 1) {
+                binding.tvAmount.text = DEFAULT_AMOUNT
+            } else {
+                binding.tvAmount.text = amountText.dropLast(1)
+            }
+        }
+        binding.keyboard.binding.btnClear.setOnClickListener {
+            binding.tvAmount.text = DEFAULT_AMOUNT
+        }
+        binding.keyboard.binding.btnEquals.setOnClickListener {
+            calculateResult()
+        }
+    }
+
+    private fun calculateResult() {
+        try {
+            val expression = getInputExpression()
+            val result = Expression(expression).calculate()
+            if (result.isNaN()) {
+                throw Exception()
+            }
+            binding.tvAmount.text = DecimalFormat("0.######").format(result).toString()
+        } catch (e: Exception) {
+            setDefaultAmount()
+        }
+    }
+
+    private fun setDefaultAmount() {
+        binding.tvAmount.text = DEFAULT_AMOUNT
+    }
+
+    private fun getInputExpression(): String {
+        return binding.tvAmount.text
+            .replace(Regex("÷"), "/")
+            .replace(Regex("×"), "*")
+    }
+
+    private fun addToInputText(buttonValue: String): String {
+        return if (binding.tvAmount.text == DEFAULT_AMOUNT) {
+            buttonValue
+        } else {
+            "${binding.tvAmount.text}$buttonValue"
+        }
     }
 
     override fun setupObserver() {
@@ -115,52 +232,47 @@ class SaveRecordFragment : BaseFragment<FragmentSaveRecordBinding>(
     }
 
     private fun setFieldsText(uiState: SaveRecordUiState) {
-        binding.edtAmounts.apply {
-            removeTextChangedListener(amountTextWatcher)
-            setText(uiState.amount)
-            setSelection(uiState.amount?.length ?: 0)
-            addTextChangedListener(amountTextWatcher)
+        uiState.detailAmount?.getContentIfNotHandled()?.let {
+            binding.tvAmount.text = it.trimEndZero()
         }
-        binding.tvCategoryName.text = uiState.categoryName ?: getText(R.string.content_description_choose_category)
-        binding.tvDate.text = uiState.date ?: getText(R.string.today)
-        binding.edtRemark.apply {
-            removeTextChangedListener(remarkTextWatcher)
-            setText(uiState.remark)
-            setSelection(uiState.remark?.length ?: 0)
-            addTextChangedListener(remarkTextWatcher)
+        uiState.detailCategory?.getContentIfNotHandled()?.let {
+            tempCategory = it
+        }
+        uiState.detailDate?.getContentIfNotHandled()?.let {
+            tempCalendar = it
+        }
+        uiState.detailRemark?.getContentIfNotHandled()?.let {
+            binding.edtRemark.setText(it)
         }
     }
 
     private fun showUserMessage(uiState: SaveRecordUiState) {
-        uiState.userMessages.firstOrNull()?.let { userMessage ->
-            showUserMessage(userMessage)
+        uiState.userMessage?.getContentIfNotHandled()?.let {
+            val hint = when (it.message) {
+                ConsumptionError.InvalidCategory -> getString(R.string.hint_invalid_field_category)
+                ConsumptionError.SaveError -> getString(R.string.hint_save_error)
+            }
+            Toast.makeText(
+                context,
+                hint,
+                Toast.LENGTH_SHORT
+            ).show()
         }
-    }
-
-    private fun showUserMessage(userMessage: UserMessage<ConsumptionError>) {
-        val hint = when (userMessage.message) {
-            InvalidField.AMOUNT -> getText(R.string.hint_invalid_field_amount)
-            InvalidField.CATEGORY_ID -> getText(R.string.hint_invalid_field_category)
-            SaveError -> getText(R.string.hint_save_error)
-        }
-        Toast.makeText(
-            context,
-            hint,
-            Toast.LENGTH_SHORT
-        ).show()
-
-        viewModel.userMessageShown(userMessage.id)
     }
 
     private fun handleSaveSuccess(uiState: SaveRecordUiState) {
-        uiState.isSaveSuccess.getContentIfNotHandled()?.let {
+        uiState.isSaveSuccess?.getContentIfNotHandled()?.let {
             if (it) {
                 showSaveSuccessMessage()
                 setRefreshState()
             }
         }
-        uiState.isModifyDetailSuccess.getContentIfNotHandled()?.let {
-            if (it) { graphViewModel.setDetailRefresh() }
+        uiState.isModifyDetailSuccess?.getContentIfNotHandled()?.let {
+            if (it) {
+                graphViewModel.setDetailRefresh()
+                setRefreshState()
+                findNavController().navigateUp()
+            }
         }
     }
 
@@ -179,7 +291,7 @@ class SaveRecordFragment : BaseFragment<FragmentSaveRecordBinding>(
     }
 
     private fun resetFields(uiState: SaveRecordUiState) {
-        uiState.isResetFields.getContentIfNotHandled()?.let { isResetFields ->
+        uiState.isResetFields?.getContentIfNotHandled()?.let { isResetFields ->
             if (isResetFields) {
                 clearFields()
             }
@@ -187,8 +299,10 @@ class SaveRecordFragment : BaseFragment<FragmentSaveRecordBinding>(
     }
 
     private fun clearFields() {
-        binding.edtAmounts.text.clear()
+        setDefaultAmount()
         binding.edtRemark.text.clear()
+        tempCategory = null
+        tempCalendar = Calendar.getInstance()
     }
 
     private fun showCategoryListDialog() {
@@ -196,10 +310,9 @@ class SaveRecordFragment : BaseFragment<FragmentSaveRecordBinding>(
     }
 
     private fun showDatePickerDialog() {
-        val calendar = Calendar.getInstance()
-        val year = calendar.get(Calendar.YEAR)
-        val month = calendar.get(Calendar.MONTH)
-        val day = calendar.get(Calendar.DAY_OF_MONTH)
+        val year = tempCalendar.get(Calendar.YEAR)
+        val month = tempCalendar.get(Calendar.MONTH)
+        val day = tempCalendar.get(Calendar.DAY_OF_MONTH)
 
         DatePickerDialog(
             requireContext(),
@@ -218,7 +331,7 @@ class SaveRecordFragment : BaseFragment<FragmentSaveRecordBinding>(
             ) {
                 val category = navBackStackEntry.savedStateHandle.get<Category>(CATEGORY_RESULT_KEY)
                 category?.let {
-                    viewModel.setCategory(it)
+                    tempCategory = it
                     navBackStackEntry.savedStateHandle.set(CATEGORY_RESULT_KEY, null)
                 }
             }
@@ -237,35 +350,10 @@ class SaveRecordFragment : BaseFragment<FragmentSaveRecordBinding>(
         month: Int,
         day: Int
     ) {
-        viewModel.setDate(year, month, day)
-    }
-
-    private fun initAmountTextWatcher(): TextWatcher {
-        return object : TextWatcher {
-            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
-            }
-
-            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                viewModel.setAmount(s)
-            }
-
-            override fun afterTextChanged(s: Editable?) {
-            }
+        tempCalendar.apply {
+            set(year, month, day)
         }
-    }
-
-    private fun initRemarkTextWatcher(): TextWatcher {
-        return object : TextWatcher {
-            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
-            }
-
-            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                viewModel.setRemark(s)
-            }
-
-            override fun afterTextChanged(s: Editable?) {
-            }
-        }
+        setDateText(tempCalendar)
     }
 
     override fun onAttach(context: Context) {
@@ -275,7 +363,7 @@ class SaveRecordFragment : BaseFragment<FragmentSaveRecordBinding>(
                 override fun handleOnBackPressed() {
                     if (binding.keyboard.isVisible) {
                         hideKeyboard()
-                        (requireActivity() as MainActivity).recoverNavBarFromKeyboard()
+                        (requireActivity() as MainActivity).showNavBar()
                     } else {
                         findNavController().navigateUp()
                     }
@@ -290,6 +378,10 @@ class SaveRecordFragment : BaseFragment<FragmentSaveRecordBinding>(
         }
         TransitionManager.beginDelayedTransition(binding.root, transition)
         binding.keyboard.visibility = View.GONE
+    }
+
+    companion object {
+        const val DEFAULT_AMOUNT = "0"
     }
 }
 

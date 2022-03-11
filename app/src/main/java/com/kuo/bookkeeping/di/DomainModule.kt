@@ -30,10 +30,17 @@ object DomainModule {
     fun provideInsertConsumptionUseCase(
         consumptionRepository: ConsumptionRepository,
         @DefaultDispatcher defaultDispatcher: CoroutineDispatcher
-    ): InsertOrUpdateConsumptionUseCase {
-        return InsertOrUpdateConsumptionUseCaseImpl(
+    ): InsertConsumptionUseCase {
+        return InsertConsumptionUseCaseImpl(
             consumptionRepository, defaultDispatcher
         )
+    }
+
+    @Provides
+    fun provideUpdateConsumptionUseCase(
+        consumptionRepository: ConsumptionRepository
+    ): UpdateConsumptionUseCase {
+        return UpdateConsumptionUseCaseImpl(consumptionRepository)
     }
 
     @Provides
@@ -51,20 +58,6 @@ object DomainModule {
     }
 
     @Provides
-    fun provideConvertYearMonthDayToTimestampUseCase(
-        @DefaultDispatcher defaultDispatcher: CoroutineDispatcher
-    ): ConvertYearMonthDayToTimestampUseCase {
-        return ConvertYearMonthDayToTimestampUseCaseImpl(defaultDispatcher)
-    }
-
-    @Provides
-    fun provideValidateConsumptionFieldUseCase(
-        @DefaultDispatcher defaultDispatcher: CoroutineDispatcher
-    ): ValidateConsumptionFieldUseCase {
-        return ValidateConsumptionFieldUseCaseImpl(defaultDispatcher)
-    }
-
-    @Provides
     fun provideGetConsumptionDetailUseCase(
         consumptionRepository: ConsumptionRepository
     ): GetConsumptionDetailUseCase {
@@ -74,20 +67,5 @@ object DomainModule {
     @Provides
     fun provideConvertStringToTimestampUseCase(): ConvertStringToTimestampUseCase {
         return ConvertStringToTimestampUseCaseImpl()
-    }
-
-    @Provides
-    fun provideConvertTimestampToStringUseCase(): ConvertTimestampToStringUseCase {
-        return ConvertTimestampToStringUseCaseImpl()
-    }
-
-    @Provides
-    fun provideFormatAmountValueUseCase(): FormatAmountValueUseCase {
-        return FormatAmountValueUseCaseImpl()
-    }
-
-    @Provides
-    fun provideConvertAmountInputToValueUseCase(): ConvertAmountInputToValueUseCase {
-        return ConvertAmountInputToValueUseCaseImpl()
     }
 }

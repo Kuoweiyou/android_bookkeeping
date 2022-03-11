@@ -9,7 +9,9 @@ import kotlinx.coroutines.flow.Flow
 
 interface ConsumptionRepository {
 
-    suspend fun insertOrUpdateConsumption(consumption: Consumption): Result<Long>
+    suspend fun insert(consumption: Consumption): Result<Long>
+
+    suspend fun update(consumption: Consumption): Result<Int>
 
     fun getConsumptionsGroupByDate(pageSize: Int): Flow<PagingData<DayConsumptions>>
 

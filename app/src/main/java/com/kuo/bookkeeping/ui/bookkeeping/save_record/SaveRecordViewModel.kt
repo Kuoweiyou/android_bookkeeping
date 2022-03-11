@@ -9,41 +9,28 @@ import com.kuo.bookkeeping.data.local.model.Consumption
 import com.kuo.bookkeeping.data.local.model.ConsumptionDetail
 import com.kuo.bookkeeping.di.AppModule.DefaultDispatcher
 import com.kuo.bookkeeping.domain.consumption.*
-import com.kuo.bookkeeping.domain.consumption.ConsumptionError.*
 import com.kuo.bookkeeping.util.Event
 import com.kuo.bookkeeping.util.UserMessage
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
-import java.text.ParseException
 import java.util.*
 import javax.inject.Inject
 
 @HiltViewModel
 class SaveRecordViewModel @Inject constructor(
-    private val insertOrUpdateConsumptionUseCase: InsertOrUpdateConsumptionUseCase,
-    private val convertYearMonthDayToTimestampUseCase: ConvertYearMonthDayToTimestampUseCase,
+    private val insertConsumptionUseCase: InsertConsumptionUseCase,
+    private val updateConsumptionUseCase: UpdateConsumptionUseCase,
     private val convertStringToTimestampUseCase: ConvertStringToTimestampUseCase,
-    private val convertTimestampToStringUseCase: ConvertTimestampToStringUseCase,
-    private val convertAmountInputToValueUseCase: ConvertAmountInputToValueUseCase,
-    private val formatAmountValueUseCase: FormatAmountValueUseCase,
-    private val validateConsumptionFieldUseCase: ValidateConsumptionFieldUseCase,
     getConsumptionDetailUseCase: GetConsumptionDetailUseCase,
     @DefaultDispatcher private val defaultDispatcher: CoroutineDispatcher
 ) : ViewModel() {
-
-    private var currentId: Int = 0
-    private var currentAmount: Float? = null
-    private var currentCategory: Category? = null
-    private var currentDate: Long = Calendar.getInstance().timeInMillis
-    private var currentRemark: String? = null
 
     private val _uiState = MutableStateFlow(SaveRecordUiState())
     val uiState: StateFlow<SaveRecordUiState> = _uiState.asStateFlow()
 
     private val detailId = MutableStateFlow(DEFAULT_DETAIL_ID)
-
     private val isFromDetailPage: Boolean
         get() {
             return detailId.value != DEFAULT_DETAIL_ID
@@ -55,183 +42,91 @@ class SaveRecordViewModel @Inject constructor(
                 .filterNot { it < 0 }
                 .collect { id ->
                     val result = getConsumptionDetailUseCase(id)
-                    handleResult(result)
+                    handleDetailResult(result)
                 }
         }
     }
 
-    private fun handleResult(result: Result<ConsumptionDetail>) {
+    private fun handleDetailResult(result: Result<ConsumptionDetail>) {
         if (result is Success) {
             setDetailData(result.data)
         } else if (result is Error) {
-            handleResultError(result.exception)
+            handleDetailResultError(result.exception)
         }
     }
 
     private fun setDetailData(detail: ConsumptionDetail) {
-        currentId = detail.consumptionId
-        currentAmount = detail.amount
-        currentCategory = Category(
-            categoryId = detail.categoryId,
-            categoryName = detail.categoryName,
-            groupId = 0
-        )
-        try {
-            currentDate = convertStringToTimestampUseCase(detail.date)
-        } catch (e: ParseException) {
-
-        }
-        currentRemark = detail.remark
-
-        _uiState.update { currentState ->
-            val formatAmountText = formatAmountValueUseCase(currentAmount)
-            currentState.copy(
-                amount = formatAmountText,
-                categoryName = currentCategory?.categoryName,
-                date = convertTimestampToStringUseCase(currentDate),
-                remark = currentRemark
+        _uiState.update { currentUiState ->
+            val category = Category(
+                categoryId = detail.categoryId,
+                categoryName = detail.categoryName,
+                groupId = -1
+            )
+            val timestamp = convertStringToTimestampUseCase(detail.date) // 開新的 get detail with timestamp 就不用再轉換
+            currentUiState.copy(
+                detailAmount = Event(detail.amount.toString()),
+                detailCategory = Event(category),
+                detailDate = Event(Calendar.getInstance().apply { timeInMillis = timestamp }),
+                detailRemark = Event(detail.remark)
             )
         }
     }
 
-    private fun handleResultError(error: Exception) {
+    private fun handleDetailResultError(error: Exception) {
 
     }
 
-    fun saveRecord() {
+    fun saveRecord(
+        amount: Float,
+        categoryId: Int?,
+        date: Calendar,
+        remark: String?
+    ) {
         viewModelScope.launch(defaultDispatcher) {
             try {
-                val consumption = validateFields()
-                insertOrUpdate(consumption)
-                resetFields()
-            } catch (e: InvalidConsumptionFieldException) {
-                handleInvalidFieldError(e.invalidFields)
-            } catch (e: Exception) {
-                handleSaveError()
-            }
-        }
-    }
-
-    fun setAmount(amount: CharSequence?) {
-        viewModelScope.launch(defaultDispatcher) {
-            currentAmount = convertAmountInputToValueUseCase(amount)
-            _uiState.update { currentState ->
-                val formatText = formatAmountValueUseCase(currentAmount)
-                currentState.copy(amount = formatText)
-            }
-        }
-    }
-
-    fun setRemark(remark: CharSequence?) {
-        viewModelScope.launch(defaultDispatcher) {
-            currentRemark = remark?.toString()
-            _uiState.update { currentState ->
-                currentState.copy(remark = currentRemark)
-            }
-        }
-    }
-
-    @Throws(InvalidConsumptionFieldException::class)
-    private suspend fun validateFields(): Consumption {
-        val categoryId = currentCategory?.categoryId
-        val amount = currentAmount
-        val invalidFields = validateConsumptionFieldUseCase(amount, categoryId)
-        if (invalidFields.isNotEmpty()) {
-            throw InvalidConsumptionFieldException(invalidFields)
-        }
-        return Consumption(
-            consumptionId = currentId,
-            amount = amount!!,
-            categoryId = categoryId,
-            time = currentDate,
-            remark = currentRemark
-        )
-    }
-
-    @Throws(Exception::class)
-    private suspend fun insertOrUpdate(consumption: Consumption) {
-        val result = insertOrUpdateConsumptionUseCase(consumption)
-        if (result is Success) {
-            if (isFromDetailPage) {
-                _uiState.update { currentUiState ->
-                    currentUiState.copy(
-                        isSaveSuccess = Event(true),
-                        isModifyDetailSuccess = Event(true)
-                    )
+                categoryId ?: throw ConsumptionError.InvalidCategory
+                val consumption = Consumption(
+                    consumptionId = if (isFromDetailPage) detailId.value else 0,
+                    amount = amount,
+                    categoryId = categoryId,
+                    time = date.timeInMillis,
+                    remark = remark
+                )
+                val result = if (isFromDetailPage) {
+                    updateConsumptionUseCase(consumption)
+                } else {
+                    insertConsumptionUseCase(consumption)
                 }
-            } else {
-                _uiState.update { currentUiState ->
-                    currentUiState.copy(isSaveSuccess = Event(true))
+                if (result is Success) {
+                    handleInsertSuccess()
+                } else if (result is Error) {
+                    throw ConsumptionError.SaveError
                 }
+            } catch (e: ConsumptionError) {
+                handleSaveError(e)
             }
-        } else if (result is Error) {
-            throw result.exception
         }
     }
 
-    private fun resetFields() {
-        currentAmount = null
-        currentCategory = null
-        currentDate = Calendar.getInstance().timeInMillis
-        currentRemark = null
-
-        _uiState.update { currentUiState ->
-            currentUiState.copy(
-                categoryName = null,
-                date = null,
-                isResetFields = Event(true)
-            )
-        }
-    }
-
-    private fun handleInvalidFieldError(
-        invalidFields: List<InvalidField>
-    ) {
-        val messages = invalidFields.map {
-            UserMessage<ConsumptionError>(message = it)
-        }
-        _uiState.update { currentUiState ->
-            currentUiState.copy(userMessages = messages)
-        }
-    }
-
-    private fun handleSaveError() {
-        _uiState.update { currentUiState ->
-            currentUiState.copy(userMessages = listOf(UserMessage(message = SaveError)))
-        }
-    }
-
-    fun setCategory(category: Category) {
-        viewModelScope.launch(defaultDispatcher) {
-            currentCategory = category
+    private fun handleInsertSuccess() {
+        if (isFromDetailPage) {
             _uiState.update { currentUiState ->
-                currentUiState.copy(categoryName = currentCategory?.categoryName)
+                currentUiState.copy(isModifyDetailSuccess = Event(true))
             }
-        }
-    }
-
-    fun setDate(
-        year: Int,
-        month: Int,
-        day: Int
-    ) {
-        viewModelScope.launch(defaultDispatcher) {
-            val timestampResult = convertYearMonthDayToTimestampUseCase(year, month, day)
-            if (timestampResult is Success) {
-                currentDate = timestampResult.data
-                _uiState.update { currentUiState ->
-                    currentUiState.copy(date = convertTimestampToStringUseCase(currentDate))
-                }
-            }
-        }
-    }
-
-    fun userMessageShown(messageId: Long) {
-        viewModelScope.launch(defaultDispatcher) {
+        } else {
             _uiState.update { currentUiState ->
-                val messages = currentUiState.userMessages.filterNot { it.id == messageId }
-                currentUiState.copy(userMessages = messages)
+                currentUiState.copy(
+                    isSaveSuccess = Event(true),
+                    isResetFields = Event(true)
+                )
             }
+        }
+    }
+
+    private fun handleSaveError(error: ConsumptionError) {
+        val message = UserMessage(message = error)
+        _uiState.update { currentUiState ->
+            currentUiState.copy(userMessage = Event(message))
         }
     }
 
@@ -247,16 +142,17 @@ class SaveRecordViewModel @Inject constructor(
 }
 
 data class SaveRecordUiState(
-    val amount: String? = null,
-    val categoryName: String? = null,
-    val date: String? = null,
-    val remark: String? = null,
-    val isSaveSuccess: Event<Boolean> = Event(false),
-    val userMessages: List<UserMessage<ConsumptionError>> = emptyList(),
-    val isResetFields: Event<Boolean> = Event(false),
-    val isModifyDetailSuccess: Event<Boolean> = Event(false)
+    val detailAmount: Event<String>? = null,
+    val detailCategory: Event<Category>? = null,
+    val detailDate: Event<Calendar>? = null,
+    val detailRemark: Event<String?>? = null,
+    val isSaveSuccess: Event<Boolean>? = null,
+    val userMessage: Event<UserMessage<ConsumptionError>>? = null,
+    val isResetFields: Event<Boolean>? = null,
+    val isModifyDetailSuccess: Event<Boolean>? = null
 )
 
-class InvalidConsumptionFieldException(
-    val invalidFields: List<InvalidField>
-) : Exception()
+sealed class ConsumptionError : Exception() {
+    object InvalidCategory : ConsumptionError()
+    object SaveError : ConsumptionError()
+}
