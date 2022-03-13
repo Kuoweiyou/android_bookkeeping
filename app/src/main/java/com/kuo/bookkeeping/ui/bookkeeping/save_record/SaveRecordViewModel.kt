@@ -31,7 +31,7 @@ class SaveRecordViewModel @Inject constructor(
     val uiState: StateFlow<SaveRecordUiState> = _uiState.asStateFlow()
 
     private val detailId = MutableStateFlow(DEFAULT_DETAIL_ID)
-    private val isFromDetailPage: Boolean
+    val isFromDetailPage: Boolean
         get() {
             return detailId.value != DEFAULT_DETAIL_ID
         }

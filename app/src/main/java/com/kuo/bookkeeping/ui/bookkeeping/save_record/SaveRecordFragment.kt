@@ -2,6 +2,7 @@ package com.kuo.bookkeeping.ui.bookkeeping.save_record
 
 import android.app.DatePickerDialog
 import android.content.Context
+import android.graphics.Color
 import android.text.format.DateUtils
 import android.view.Gravity
 import android.view.View
@@ -17,11 +18,14 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
+import androidx.transition.Slide
 import androidx.transition.TransitionManager
+import com.google.android.material.transition.MaterialContainerTransform
 import com.kuo.bookkeeping.MainActivity
 import com.kuo.bookkeeping.R
 import com.kuo.bookkeeping.data.local.model.Category
 import com.kuo.bookkeeping.databinding.FragmentSaveRecordBinding
+import com.kuo.bookkeeping.extension.themeColor
 import com.kuo.bookkeeping.extension.trimEndZero
 import com.kuo.bookkeeping.ui.base.BaseFragment
 import com.kuo.bookkeeping.ui.bookkeeping.BookkeepingGraphViewModel
@@ -68,7 +72,38 @@ class SaveRecordFragment : BaseFragment<FragmentSaveRecordBinding>(
     }
 
     override fun setupView(view: View) {
+        setupTransition()
+    }
 
+    private fun setupTransition() {
+        val isFromDetailPage = args.consumptionId != -1
+        if (isFromDetailPage) {
+            enterTransition = Slide().apply {
+                slideEdge = Gravity.END
+                duration = resources.getInteger(R.integer.motion_duration).toLong()
+                addTarget(binding.root)
+            }
+            returnTransition = Slide().apply {
+                slideEdge = Gravity.END
+                duration = 150.toLong()
+                addTarget(binding.root)
+            }
+        } else {
+            enterTransition = MaterialContainerTransform().apply {
+                startView = requireActivity().findViewById(R.id.fab_add_record)
+                endView = binding.root
+                duration = resources.getInteger(R.integer.motion_duration).toLong()
+                scrimColor = Color.TRANSPARENT
+                containerColor = requireContext().themeColor(R.attr.colorSurface)
+                startContainerColor = requireContext().themeColor(R.attr.colorAccent)
+                endContainerColor = requireContext().themeColor(R.attr.colorSurface)
+                addTarget(binding.root)
+            }
+            returnTransition = Slide().apply {
+                duration = 225L
+                addTarget(binding.root)
+            }
+        }
     }
 
     override fun setupListener() {
@@ -110,7 +145,7 @@ class SaveRecordFragment : BaseFragment<FragmentSaveRecordBinding>(
         TransitionManager.beginDelayedTransition(binding.root, transition)
         binding.keyboard.visibility = View.VISIBLE
 
-        (requireActivity() as MainActivity).transformNavBarToKeyboard()
+        (requireActivity() as MainActivity).hideNavBar()
     }
 
     private fun setupKeyboard() {
@@ -213,8 +248,8 @@ class SaveRecordFragment : BaseFragment<FragmentSaveRecordBinding>(
     }
 
     override fun setupObserver() {
-        setupCategoryResultObserver()
         viewModel.setId(args.consumptionId)
+        setupCategoryResultObserver()
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
                 viewModel.uiState.collect { uiState ->

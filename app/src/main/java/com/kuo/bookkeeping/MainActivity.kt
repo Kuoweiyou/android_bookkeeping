@@ -5,6 +5,7 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
 import androidx.activity.viewModels
+import androidx.fragment.app.Fragment
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
@@ -15,6 +16,8 @@ import androidx.navigation.ui.NavigationUI.setupWithNavController
 import androidx.navigation.ui.navigateUp
 import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
+import com.google.android.material.transition.MaterialElevationScale
+import com.google.android.material.transition.MaterialFadeThrough
 import com.kuo.bookkeeping.databinding.ActivityMainBinding
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
@@ -28,13 +31,27 @@ class MainActivity : AppCompatActivity() {
 
     private val viewModel: MainViewModel by viewModels()
 
+    private val currentNavigationFragment: Fragment?
+        get() = supportFragmentManager.findFragmentById(R.id.nav_host_container)
+            ?.childFragmentManager
+            ?.fragments
+            ?.first()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
+        setupView()
         setupNavigation()
         setupListener()
         setupObserver()
+    }
+
+    private fun setupView() {
+        binding.appBarMain.fabAddRecord.apply {
+            setShowMotionSpecResource(R.animator.fab_show)
+            setHideMotionSpecResource(R.animator.fab_hide)
+        }
     }
 
     private fun setupNavigation() {
@@ -56,6 +73,14 @@ class MainActivity : AppCompatActivity() {
 
     private fun setupListener() {
         binding.appBarMain.fabAddRecord.setOnClickListener {
+            currentNavigationFragment?.apply {
+                exitTransition = MaterialElevationScale(false).apply {
+                    duration = resources.getInteger(R.integer.motion_duration).toLong()
+                }
+                reenterTransition = MaterialElevationScale(true).apply {
+                    duration = resources.getInteger(R.integer.motion_duration).toLong()
+                }
+            }
             navController.navigate(R.id.action_bookkeepingFragment_to_saveRecordFragment)
         }
         navController.addOnDestinationChangedListener { _, destination, _ ->
@@ -72,17 +97,17 @@ class MainActivity : AppCompatActivity() {
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
                 viewModel.uiState.collect { uiState ->
-                    binding.appBarMain.fabAddRecord.visibility = if (uiState.isShowAddFab) {
-                        View.VISIBLE
+                    if (uiState.isShowAddFab) {
+                        binding.appBarMain.fabAddRecord.show()
                     } else {
-                        View.GONE
+                        binding.appBarMain.fabAddRecord.hide()
                     }
                 }
             }
         }
     }
 
-    fun transformNavBarToKeyboard() {
+    fun hideNavBar() {
         binding.appBarMain.bottomNav.animate()
             .translationY(-(binding.appBarMain.bottomNav.height.toFloat() / 2))
             .setStartDelay(resources.getInteger(R.integer.motion_nav_bar_to_keyboard_start_delay).toLong())

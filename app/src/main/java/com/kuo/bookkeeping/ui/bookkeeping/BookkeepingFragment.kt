@@ -10,6 +10,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.FragmentNavigatorExtras
 import androidx.navigation.fragment.findNavController
+import com.google.android.material.transition.MaterialElevationScale
 import com.kuo.bookkeeping.R
 import com.kuo.bookkeeping.databinding.FragmentBookkeepingBinding
 import com.kuo.bookkeeping.di.LinearLayoutManagerFactory
@@ -64,6 +65,9 @@ class BookkeepingFragment : BaseFragment<FragmentBookkeepingBinding>(
             itemView to getString(R.string.transition_card_consumption_item, consumptionId.toString())
         )
         findNavController().navigate(action, extras)
+
+        exitTransition = null
+        reenterTransition = null
     }
 
     override fun setupListener() {

@@ -1,6 +1,7 @@
 package com.kuo.bookkeeping.ui.bookkeeping.detail
 
 import android.annotation.SuppressLint
+import android.view.Gravity
 import android.view.View
 import android.widget.Toast
 import androidx.core.content.ContextCompat
@@ -11,6 +12,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
+import androidx.transition.Slide
 import com.google.android.material.transition.MaterialContainerTransform
 import com.kuo.bookkeeping.R
 import com.kuo.bookkeeping.data.local.model.ConsumptionDetail
@@ -46,6 +48,12 @@ class ConsumptionDetailFragment : BaseFragment<FragmentConsumptionDetailBinding>
         binding.root.transitionName = getString(
             R.string.transition_card_consumption_item, args.consumptionId.toString()
         )
+
+        exitTransition = Slide().apply {
+            slideEdge = Gravity.START
+            duration = 200.toLong()
+            addTarget(binding.root)
+        }
     }
 
     override fun setupListener() {
