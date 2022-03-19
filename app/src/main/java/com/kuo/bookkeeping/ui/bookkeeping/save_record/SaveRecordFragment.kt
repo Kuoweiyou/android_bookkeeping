@@ -128,6 +128,7 @@ class SaveRecordFragment : BaseFragment<FragmentSaveRecordBinding>(
                 setDefaultAmount()
                 0f
             }
+            println("date: day: ${tempCalendar.get(Calendar.DAY_OF_MONTH)}, time: ${tempCalendar.timeInMillis}")
             viewModel.saveRecord(
                 amount = amount,
                 categoryId = tempCategory?.categoryId,

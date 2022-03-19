@@ -3,7 +3,8 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="?attr/colorOnSecondary">
 
     <!-- 新增一個重置按紐 -->
 
@@ -44,6 +45,7 @@
         android:clickable="true"
         android:focusable="true"
         android:text="0"
+        android:textSize="20sp"
         app:layout_constraintStart_toEndOf="@id/iv_money"
         app:layout_constraintEnd_toStartOf="@id/guideline_end"
         app:layout_constraintTop_toTopOf="@id/iv_money"
@@ -76,7 +78,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="6dp"
-        android:textSize="13sp"
+        android:textSize="18sp"
         android:text="@string/content_description_choose_category"
         app:layout_constraintStart_toEndOf="@id/iv_category"
         app:layout_constraintTop_toTopOf="@id/iv_category"
@@ -107,7 +109,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="6dp"
-        android:textSize="13sp"
+        android:textSize="18sp"
         android:text="@string/today"
         app:layout_constraintStart_toEndOf="@id/iv_calendar"
         app:layout_constraintTop_toTopOf="@id/iv_calendar"
@@ -148,7 +150,7 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="6dp"
-        android:textSize="13sp"
+        android:textSize="18sp"
         app:layout_constraintStart_toEndOf="@id/iv_description"
         app:layout_constraintEnd_toStartOf="@id/guideline_end"
         app:layout_constraintTop_toTopOf="@id/iv_description"

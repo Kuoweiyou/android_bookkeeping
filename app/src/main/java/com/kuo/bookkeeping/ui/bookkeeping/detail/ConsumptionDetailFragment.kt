@@ -1,8 +1,7 @@
 package com.kuo.bookkeeping.ui.bookkeeping.detail
 
 import android.annotation.SuppressLint
-import android.view.Gravity
-import android.view.View
+import android.view.*
 import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.viewModels
@@ -34,6 +33,7 @@ class ConsumptionDetailFragment : BaseFragment<FragmentConsumptionDetailBinding>
     private val graphViewModel: BookkeepingGraphViewModel by hiltNavGraphViewModels(R.id.graph_bookkeeping)
 
     override fun setupView(view: View) {
+        setHasOptionsMenu(true)
         setupTransition()
     }
 
@@ -56,12 +56,23 @@ class ConsumptionDetailFragment : BaseFragment<FragmentConsumptionDetailBinding>
         }
     }
 
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+        inflater.inflate(R.menu.menu_consumption_detail, menu)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        return when (item.itemId) {
+            R.id.action_delete -> {
+                viewModel.delete()
+                true
+            }
+            else -> super.onOptionsItemSelected(item)
+        }
+    }
+
     override fun setupListener() {
         binding.btnEdit.setOnClickListener {
             navigateToSaveRecordPage()
-        }
-        binding.btnDelete.setOnClickListener {
-            viewModel.delete()
         }
     }
 

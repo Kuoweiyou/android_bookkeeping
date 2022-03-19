@@ -31,7 +31,7 @@ class SaveRecordViewModel @Inject constructor(
     val uiState: StateFlow<SaveRecordUiState> = _uiState.asStateFlow()
 
     private val detailId = MutableStateFlow(DEFAULT_DETAIL_ID)
-    val isFromDetailPage: Boolean
+    private val isFromDetailPage: Boolean
         get() {
             return detailId.value != DEFAULT_DETAIL_ID
         }
@@ -92,6 +92,7 @@ class SaveRecordViewModel @Inject constructor(
                     time = date.timeInMillis,
                     remark = remark
                 )
+                println("date view model: day: ${date.get(Calendar.DAY_OF_MONTH)}, time: ${date.timeInMillis}")
                 val result = if (isFromDetailPage) {
                     updateConsumptionUseCase(consumption)
                 } else {

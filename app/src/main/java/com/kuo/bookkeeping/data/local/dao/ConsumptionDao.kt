@@ -16,16 +16,16 @@ interface ConsumptionDao {
 
     @MapInfo(keyColumn = "date")
     @Query(
-        "SELECT DATE(time/1000, 'unixepoch') AS date, consumption_id AS consumptionId, amount, category_name AS categoryName, icon_name AS iconName " +
+        "SELECT DATE(time/1000, 'unixepoch', 'localtime') AS date, consumption_id AS consumptionId, amount, category_name AS categoryName, icon_name AS iconName " +
         "FROM consumption " +
         "JOIN category ON category.category_id = consumption.category_id " +
         "JOIN category_group ON category_group.group_id = category.group_id " +
-        "WHERE date IN (SELECT DATE(time/1000, 'unixepoch') AS date FROM consumption GROUP BY date ORDER BY date DESC LIMIT :start, :limit) " +
+        "WHERE date IN (SELECT DATE(time/1000, 'unixepoch', 'localtime') AS date FROM consumption GROUP BY date ORDER BY date DESC LIMIT :start, :limit) " +
         "ORDER BY date DESC, consumption_id DESC"
     )
     suspend fun getConsumptionsGroupByDate(start: Int, limit: Int): Map<String, List<ConsumptionCategoryTuple>>
 
-    @Query("SELECT consumption_id AS consumptionId, amount, category.category_id AS categoryId, category_name AS categoryName, icon_name AS iconName, DATE(time/1000, 'unixepoch') AS date, remark " +
+    @Query("SELECT consumption_id AS consumptionId, amount, category.category_id AS categoryId, category_name AS categoryName, icon_name AS iconName, DATE(time/1000, 'unixepoch', 'localtime') AS date, remark " +
         "FROM consumption " +
         "JOIN category ON category.category_id = consumption.category_id " +
         "JOIN category_group ON category_group.group_id = category.group_id " +

@@ -111,26 +111,15 @@
         app:layout_constraintTop_toTopOf="@id/tv_remark_holder"
         tools:text="備註" />
 
-    <Button
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/btn_edit"
-        style="@style/Widget.Material3.Button.Icon"
+        style="@style/Widget.Self.FloatingActionButton.Primary"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/edit"
-        android:textSize="15sp"
-        app:icon="@drawable/ic_edit"
-        app:layout_constraintEnd_toStartOf="@id/guideline_end"
-        app:layout_constraintBottom_toTopOf="@id/guideline_bottom" />
-
-    <Button
-        android:id="@+id/btn_delete"
-        style="@style/Widget.Material3.Button.Icon"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/delete"
-        android:textSize="15sp"
-        app:icon="@drawable/ic_delete"
-        app:layout_constraintStart_toEndOf="@id/guideline_start"
-        app:layout_constraintBottom_toTopOf="@id/guideline_bottom" />
+        app:srcCompat="@drawable/ic_edit"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/guideline_bottom"
+        android:contentDescription="@string/edit" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
